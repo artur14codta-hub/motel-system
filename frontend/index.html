@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motel Maçã do Amor - Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="flex bg-gray-100 min-h-screen">
+
+
+<!-- Sidebar -->
+<aside class="w-64 bg-white shadow-md p-4 flex flex-col gap-4">
+<h1 class="text-2xl font-bold text-red-600 text-center">Motel Maçã do Amor</h1>
+<nav class="flex flex-col gap-3">
+<a href="quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-bed"></i> Quartos</a>
+<a href="consumo.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-wine-bottle"></i> Consumo</a>
+<a href="pagamento.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-credit-card"></i> Pagamento</a>
+<a href="relatorio.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-chart-line"></i> Relatórios</a>
+<a href="produto.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-box"></i> Produtos</a>
+<a href="estoque.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-warehouse"></i> Estoque</a>
+<a href="usuarios.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-users"></i> Usuários</a>
+</nav>
+<div class="mt-auto">
+<a href="login.html" class="flex items-center gap-2 p-2 text-red-600 hover:bg-gray-200 rounded"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
+</div>
+</aside>
+
+
+<!-- Main Content -->
+<main class="flex-1 p-6">
+<h2 class="text-3xl font-semibold mb-6">Dashboard</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-white p-6 rounded-xl shadow">
+<h3 class="text-lg font-medium mb-2">Quartos Ocupados</h3>
+<p class="text-2xl font-bold text-red-600">0</p>
+</div>
+<div class="bg-white p-6 rounded-xl shadow">
+<h3 class="text-lg font-medium mb-2">Faturamento Hoje</h3>
+<p class="text-2xl font-bold text-green-600">R$ 0,00</p>
+</div>
+<div class="bg-white p-6 rounded-xl shadow">
+<h3 class="text-lg font-medium mb-2">Produtos em Estoque</h3>
+<p class="text-2xl font-bold text-blue-600">0</p>
+</div>
+</div>
+</main>
+
+
+
+<!-- Modal senha gerente -->
+<div id="modalSenhaGerente" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+  <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-lg w-80 text-center">
+    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Confirmação de Gerente</h2>
+    <input type="password" id="inputSenhaGerente" placeholder="Digite a senha"
+      class="border w-full px-3 py-2 rounded mb-4 dark:bg-gray-800 dark:text-white">
+    <div class="flex justify-center gap-4">
+      <button id="btnConfirmarSenha" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Confirmar</button>
+      <button id="btnCancelarSenha" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

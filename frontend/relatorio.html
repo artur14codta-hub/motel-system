@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatórios - Motel Maçã do Amor</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="flex bg-gray-100 min-h-screen">
+
+<!-- Sidebar -->
+<aside class="w-64 bg-white shadow-md p-4 flex flex-col gap-4">
+  <h1 class="text-2xl font-bold text-red-600 text-center">Motel Maçã do Amor</h1>
+  <nav class="flex flex-col gap-3">
+    <a href="quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-bed"></i> Quartos</a>
+    <a href="controle_quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-sliders"></i> Controle de Quartos</a>
+    <a href="consumo.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-wine-bottle"></i> Consumo</a>
+    <a href="pagamento.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-credit-card"></i> Pagamento</a>
+    <a href="relatorio.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded"><i class="fa-solid fa-chart-line"></i> Relatórios</a>
+    <a href="produto.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-box"></i> Produtos</a>
+    <a href="estoque.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-warehouse"></i> Estoque</a>
+    <a href="usuarios.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-users"></i> Usuários</a>
+  </nav>
+  <div class="mt-auto">
+    <a href="login.html" class="flex items-center gap-2 p-2 text-red-600 hover:bg-gray-200 rounded"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="flex-1 p-6">
+  <h2 class="text-3xl font-semibold mb-6">Relatório de Consumo</h2>
+
+  <!-- Filtro por Data -->
+  <div class="bg-white p-4 rounded-xl shadow mb-6 flex gap-4">
+    <input type="date" id="filtroData" class="border rounded-xl p-2">
+    <button onclick="filtrarPorData()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl">
+      Filtrar
+    </button>
+    <button onclick="limparFiltro()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-xl">
+      Limpar
+    </button>
+  </div>
+
+  <!-- Tabela de Relatório -->
+  <div class="bg-white p-6 rounded-xl shadow">
+    <table class="w-full table-auto border-collapse border border-gray-300">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="border px-2 py-2">Quarto</th>
+          <th class="border px-2 py-2">Data</th>
+          <th class="border px-2 py-2">Entrada</th>
+          <th class="border px-2 py-2">Saída</th>
+          <th class="border px-2 py-2">Consumos</th>
+          <th class="border px-2 py-2">Valor Quarto</th>
+          <th class="border px-2 py-2">Total</th>
+          <th class="border px-2 py-2">Ações</th>
+        </tr>
+      </thead>
+      <tbody id="relatorioTableBody">
+        <!-- Linhas adicionadas pelo JS -->
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<!-- Modal de Edição -->
+<div id="editarModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+  <div class="bg-white rounded-xl shadow-lg w-full max-w-lg p-6 relative">
+    <h2 class="text-2xl font-bold mb-4">Editar Registro</h2>
+    <form id="editarForm" class="flex flex-col gap-4">
+      <div>
+        <label class="block font-semibold mb-1">Quarto</label>
+        <input type="text" id="editarQuarto" class="w-full border rounded-xl p-2" required>
+      </div>
+      <div>
+        <label class="block font-semibold mb-1">Data</label>
+        <input type="date" id="editarData" class="w-full border rounded-xl p-2" required>
+      </div>
+      <div>
+        <label class="block font-semibold mb-1">Hora de Entrada</label>
+        <input type="time" id="editarHoraEntrada" class="w-full border rounded-xl p-2">
+      </div>
+      <div>
+        <label class="block font-semibold mb-1">Hora de Saída</label>
+        <input type="time" id="editarHoraSaida" class="w-full border rounded-xl p-2">
+      </div>
+      <div>
+        <label class="block font-semibold mb-1">Valor do Quarto</label>
+        <input type="number" step="0.01" id="editarValorQuarto" class="w-full border rounded-xl p-2">
+      </div>
+      <div>
+        <label class="block font-semibold mb-1">Total</label>
+        <input type="number" step="0.01" id="editarTotal" class="w-full border rounded-xl p-2">
+      </div>
+      <div class="flex justify-end gap-2 mt-4">
+        <button type="button" onclick="fecharModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-xl">
+          Cancelar
+        </button>
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl">
+          Salvar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- Modal de Senha do Gerente -->
+<div id="modalSenhaGerente" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+  <div class="bg-gray-800 text-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
+    <h2 class="text-2xl font-bold mb-4 text-center">Acesso Restrito</h2>
+    <p class="mb-4 text-center">Digite a senha do gerente para continuar:</p>
+    <input type="password" id="inputSenhaModal" class="w-full p-3 rounded-xl text-black mb-4" placeholder="Senha do gerente">
+    <div class="flex justify-end gap-2">
+      <button onclick="fecharModalSenha()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-xl">Cancelar</button>
+      <button onclick="verificarSenhaGerente()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl">Confirmar</button>
+    </div>
+    <p id="erroSenha" class="text-red-500 mt-2 text-center hidden">Senha incorreta!</p>
+  </div>
+</div>
+
+<script src="relatorio.js"></script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle de Estoque - Motel Maçã do Amor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="flex bg-gray-100 min-h-screen">
+
+<!-- Sidebar -->
+<aside class="w-64 bg-white shadow-md p-4 flex flex-col gap-4">
+  <h1 class="text-2xl font-bold text-red-600 text-center">Motel Maçã do Amor</h1>
+  <nav class="flex flex-col gap-3">
+    <a href="quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-bed"></i> Quartos</a>
+    <a href="controle_quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-sliders"></i> Controle de Quartos</a>
+    <a href="consumo.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-wine-bottle"></i> Consumo</a>
+    <a href="pagamento.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-credit-card"></i> Pagamento</a>
+    <a href="relatorio.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-chart-line"></i> Relatórios</a>
+    <a href="produto.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-box"></i> Produtos</a>
+    <a href="estoque.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded"><i class="fa-solid fa-warehouse"></i> Estoque</a>
+    <a href="usuarios.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-users"></i> Usuários</a>
+  </nav>
+  <div class="mt-auto">
+    <a href="login.html" class="flex items-center gap-2 p-2 text-red-600 hover:bg-gray-200 rounded"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="flex-1 p-6">
+  <h2 class="text-3xl font-semibold mb-6">Controle de Estoque</h2>
+
+  <!-- Campo de Busca -->
+  <div class="max-w-lg mb-4">
+    <input 
+      type="text" 
+      id="filtroInput" 
+      placeholder="🔎 Buscar produto..." 
+      class="w-full border rounded-xl p-3 focus:ring-2 focus:ring-red-400 outline-none">
+  </div>
+
+  <!-- Tabela de Estoque -->
+  <div class="overflow-x-auto bg-white p-4 rounded-2xl shadow max-w-4xl">
+    <table class="w-full border-collapse border border-gray-300">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="border px-2 py-2 text-left">Produto</th>
+          <th class="border px-2 py-2 text-center">Quantidade</th>
+          <th class="border px-2 py-2 text-center">Preço (R$)</th>
+          <th class="border px-2 py-2 text-center">Ações</th>
+        </tr>
+      </thead>
+      <tbody id="estoqueTableBody"></tbody>
+    </table>
+
+    <!-- Resumo -->
+    <div id="estoqueResumo" class="mt-4 bg-gray-100 rounded-xl p-4 flex justify-between text-lg font-semibold">
+      <span>Total de Itens: <span id="totalItens">0</span></span>
+      <span>Valor Total: R$ <span id="valorTotal">0.00</span></span>
+    </div>
+  </div>
+</main>
+
+<script>
+  let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
+  const estoqueTableBody = document.getElementById("estoqueTableBody");
+  const filtroInput = document.getElementById("filtroInput");
+  const totalItensEl = document.getElementById("totalItens");
+  const valorTotalEl = document.getElementById("valorTotal");
+
+  function carregarEstoque(filtro = "") {
+    estoqueTableBody.innerHTML = "";
+
+    const produtosFiltrados = produtos.filter(p => 
+      p.nome.toLowerCase().includes(filtro.toLowerCase())
+    );
+
+    if (produtosFiltrados.length === 0) {
+      estoqueTableBody.innerHTML = `
+        <tr>
+          <td colspan="4" class="text-center text-gray-500 py-4">
+            Nenhum produto encontrado.
+          </td>
+        </tr>`;
+      totalItensEl.innerText = 0;
+      valorTotalEl.innerText = "0.00";
+      return;
+    }
+
+    let totalItens = 0;
+    let valorTotal = 0;
+
+    produtosFiltrados.forEach((p, i) => {
+      totalItens += p.quantidade;
+      valorTotal += p.quantidade * p.preco;
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="border px-2 py-1">${p.nome}</td>
+        <td class="border px-2 py-1 text-center">
+          <input type="number" id="quantidade-${i}" value="${p.quantidade}" 
+            class="border rounded p-1 w-20 text-center" min="0">
+        </td>
+        <td class="border px-2 py-1 text-center">R$ ${parseFloat(p.preco).toFixed(2)}</td>
+        <td class="border px-2 py-1 text-center flex justify-center gap-2">
+          <button onclick="alterarQuantidade(${i}, 1)" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded">+1</button>
+          <button onclick="alterarQuantidade(${i}, -1)" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">-1</button>
+          <button onclick="salvarQuantidade(${i})" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">Salvar</button>
+        </td>
+      `;
+      estoqueTableBody.appendChild(tr);
+    });
+
+    totalItensEl.innerText = totalItens;
+    valorTotalEl.innerText = valorTotal.toFixed(2);
+  }
+
+  function alterarQuantidade(index, valor) {
+    if (produtos[index].quantidade + valor < 0) {
+      alert("Quantidade não pode ser negativa!");
+      return;
+    }
+    produtos[index].quantidade += valor;
+    localStorage.setItem("produtos", JSON.stringify(produtos));
+    carregarEstoque(filtroInput.value);
+  }
+
+  function salvarQuantidade(index) {
+    const input = document.getElementById(`quantidade-${index}`);
+    const novaQuantidade = parseInt(input.value);
+
+    if (isNaN(novaQuantidade) || novaQuantidade < 0) {
+      alert("Digite um valor válido para a quantidade!");
+      input.value = produtos[index].quantidade;
+      return;
+    }
+
+    produtos[index].quantidade = novaQuantidade;
+    localStorage.setItem("produtos", JSON.stringify(produtos));
+    carregarEstoque(filtroInput.value);
+  }
+
+  filtroInput.addEventListener("input", () => {
+    carregarEstoque(filtroInput.value);
+  });
+
+  carregarEstoque();
+</script>
+
+</body>
+</html>

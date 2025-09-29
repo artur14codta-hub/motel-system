@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Usuários - Motel Maçã do Amor</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex bg-gray-100 min-h-screen">
+
+<!-- Sidebar -->
+<aside class="w-64 bg-white shadow-md p-4 flex flex-col gap-4">
+  <h1 class="text-2xl font-bold text-red-600 text-center">Motel Maçã do Amor</h1>
+  <nav class="flex flex-col gap-3">
+    <a href="quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded">Quartos</a>
+    <a href="usuarios.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded">Usuários</a>
+  </nav>
+</aside>
+
+<!-- Main Content -->
+<main class="flex-1 p-6">
+  <h2 class="text-3xl font-semibold mb-6">Cadastro de Funcionários</h2>
+
+  <div class="bg-white p-6 rounded-xl shadow max-w-lg mb-6">
+    <form id="cadastroForm">
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-1">Nome Completo</label>
+        <input type="text" id="nome" class="w-full p-3 border rounded-xl" placeholder="Digite o nome completo">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-1">Data de Nascimento</label>
+        <input type="date" id="nascimento" class="w-full p-3 border rounded-xl">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-1">CPF</label>
+        <input type="text" id="cpf" class="w-full p-3 border rounded-xl" placeholder="000.000.000-00">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-1">Telefone</label>
+        <input type="text" id="telefone" class="w-full p-3 border rounded-xl" placeholder="(00) 00000-0000">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-1">Cargo</label>
+        <input type="text" id="cargo" class="w-full p-3 border rounded-xl" placeholder="Ex: Recepção">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-1">E-mail</label>
+        <input type="email" id="emailFunc" class="w-full p-3 border rounded-xl" placeholder="email@email.com">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-1">Senha</label>
+        <input type="password" id="senhaFunc" class="w-full p-3 border rounded-xl" placeholder="********">
+      </div>
+
+      <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white p-3 rounded-xl font-bold">Cadastrar</button>
+    </form>
+  </div>
+
+  <!-- Lista de Funcionários -->
+  <div class="bg-white p-6 rounded-xl shadow max-w-3xl">
+    <h3 class="text-2xl font-semibold mb-4">Funcionários Cadastrados</h3>
+    <table class="w-full table-auto border-collapse border border-gray-300">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="border px-4 py-2">Nome</th>
+          <th class="border px-4 py-2">CPF</th>
+          <th class="border px-4 py-2">Telefone</th>
+          <th class="border px-4 py-2">Cargo</th>
+          <th class="border px-4 py-2">E-mail</th>
+          <th class="border px-4 py-2">Editar</th>
+          <th class="border px-4 py-2">Remover</th>
+        </tr>
+      </thead>
+      <tbody id="funcionariosTableBody">
+        <!-- Funcionários serão adicionados pelo JS -->
+      </tbody>
+    </table>
+  </div>
+
+</main>
+
+<!-- Modal de Senha do Gerente -->
+<div id="modalSenhaGerente" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+  <div class="bg-gray-800 text-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
+    <h2 class="text-2xl font-bold mb-4 text-center">Acesso Restrito</h2>
+    <p class="mb-4 text-center">Digite a senha do gerente para continuar:</p>
+    <input type="password" id="inputSenhaModal" class="w-full p-3 rounded-xl text-black mb-4" placeholder="Senha do gerente">
+    <div class="flex justify-end gap-2">
+      <button class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-xl">Cancelar</button>
+      <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl">Confirmar</button>
+    </div>
+    <p id="erroSenha" class="text-red-500 mt-2 text-center hidden">Senha incorreta!</p>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

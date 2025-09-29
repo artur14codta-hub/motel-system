@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controle de Quartos - Motel Maçã do Amor</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="flex bg-gray-100 min-h-screen">
+
+<!-- Sidebar -->
+<aside class="w-64 bg-white shadow-md p-4 flex flex-col gap-4">
+  <h1 class="text-2xl font-bold text-red-600 text-center">Motel Maçã do Amor</h1>
+  <nav class="flex flex-col gap-3">
+    <a href="quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-bed"></i> Quartos</a>
+    <a href="controle_quartos.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded"><i class="fa-solid fa-sliders"></i> Controle de Quartos</a>
+    <a href="consumo.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-wine-bottle"></i> Consumo</a>
+    <a href="pagamento.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-credit-card"></i> Pagamento</a>
+    <a href="relatorio.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-chart-line"></i> Relatórios</a>
+    <a href="produto.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-box"></i> Produtos</a>
+    <a href="estoque.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-warehouse"></i> Estoque</a>
+    <a href="usuarios.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-users"></i> Usuários</a>
+  </nav>
+  <div class="mt-auto">
+    <a href="login.html" class="flex items-center gap-2 p-2 text-red-600 hover:bg-gray-200 rounded"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="flex-1 p-6">
+  <h2 class="text-3xl font-semibold mb-6">Controle de Quartos</h2>
+
+  <!-- Formulário de Cadastro -->
+  <div class="bg-white p-6 rounded-xl shadow max-w-lg mb-6">
+    <form id="controleQuartoForm">
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-1">Nome do Quarto</label>
+        <input type="text" id="nomeQuarto" class="w-full p-3 border rounded-xl" placeholder="Ex: Suíte Luxo">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-1">Valor do Quarto (R$)</label>
+        <input type="number" id="valorQuarto" class="w-full p-3 border rounded-xl" placeholder="Ex: 150">
+      </div>
+
+      <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white p-3 rounded-xl font-bold">Adicionar Quarto</button>
+    </form>
+  </div>
+
+  <!-- Tabela de Quartos -->
+  <div class="bg-white p-6 rounded-xl shadow max-w-3xl">
+    <h3 class="text-2xl font-semibold mb-4">Quartos Cadastrados</h3>
+    <table class="w-full table-auto border-collapse border border-gray-300">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="border px-4 py-2">Nome</th>
+          <th class="border px-4 py-2">Valor (R$)</th>
+          <th class="border px-4 py-2">Remover</th>
+        </tr>
+      </thead>
+      <tbody id="quartosControleTableBody">
+        <!-- Quartos cadastrados serão adicionados pelo JS -->
+      </tbody>
+    </table>
+  </div>
+</main>
+
+
+<!-- Modal de Senha do Gerente -->
+<div id="modalSenhaGerente" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+  <div class="bg-gray-800 text-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
+    <h2 class="text-2xl font-bold mb-4 text-center">Acesso Restrito</h2>
+    <p class="mb-4 text-center">Digite a senha do gerente para continuar:</p>
+    <input type="password" id="inputSenhaModal" class="w-full p-3 rounded-xl text-black mb-4" placeholder="Senha do gerente">
+    <div class="flex justify-end gap-2">
+      <button onclick="fecharModalSenha()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-xl">Cancelar</button>
+      <button onclick="verificarSenhaGerente()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl">Confirmar</button>
+    </div>
+    <p id="erroSenha" class="text-red-500 mt-2 text-center hidden">Senha incorreta!</p>
+  </div>
+</div>
+
+
+<script src="controle_quartos.js"></script>
+</body>
+</html>
