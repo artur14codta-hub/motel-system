@@ -1,6 +1,5 @@
 // ======================
-// FRONTEND/app.js (VERSÃO FINAL CORRIGIDA)
-// ======================
+
 
 // ===== LOGIN =====
 const loginForm = document.querySelector('form');
