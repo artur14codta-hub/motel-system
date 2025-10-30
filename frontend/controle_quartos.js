@@ -1,3 +1,32 @@
+// ======== Proteção por senha do gerente ========
+const GERENTE_SENHA = "1205"; // senha padrão, pode alterar
+
+function fecharModalSenha() {
+  document.getElementById("modalSenhaGerente").classList.add("hidden");
+  document.getElementById("inputSenhaModal").value = "";
+  document.getElementById("erroSenha").classList.add("hidden");
+}
+
+function verificarSenhaGerente() {
+  const input = document.getElementById("inputSenhaModal").value;
+  const erro = document.getElementById("erroSenha");
+  const conteudo = document.getElementById("conteudoControleQuartos");
+
+  if (input === GERENTE_SENHA) {
+    erro.classList.add("hidden");
+    document.getElementById("modalSenhaGerente").classList.add("hidden");
+    conteudo.classList.remove("hidden");
+  } else {
+    erro.classList.remove("hidden");
+  }
+}
+
+// Mostrar o modal ao carregar a página
+window.addEventListener("load", () => {
+  document.getElementById("modalSenhaGerente").classList.remove("hidden");
+});
+
+// ======== Controle de Quartos ========
 const controleForm = document.getElementById('controleQuartoForm');
 const quartosControleTableBody = document.getElementById('quartosControleTableBody');
 let editarIndex = null; // Para controlar se estamos editando um quarto
@@ -36,12 +65,10 @@ if (controleForm) {
     let quartos = JSON.parse(localStorage.getItem('quartos')) || [];
 
     if (editarIndex !== null) {
-      // Editando quarto existente
       quartos[editarIndex].nome = nome;
       quartos[editarIndex].valor = valor;
       editarIndex = null;
     } else {
-      // Adicionando novo quarto
       quartos.push({ nome, valor, status: 'livre' });
     }
 
@@ -65,5 +92,5 @@ function editarQuarto(index) {
   const quarto = quartos[index];
   document.getElementById('nomeQuarto').value = quarto.nome;
   document.getElementById('valorQuarto').value = quarto.valor;
-  editarIndex = index; // Marca que estamos editando este quarto
+  editarIndex = index;
 }

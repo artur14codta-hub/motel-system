@@ -28,7 +28,7 @@
 </aside>
 
 <!-- Main Content -->
-<main class="flex-1 p-6">
+<main id="conteudoControleQuartos" class="flex-1 p-6 hidden">
   <h2 class="text-3xl font-semibold mb-6">Controle de Quartos</h2>
 
   <!-- Formulário de Cadastro -->
@@ -66,9 +66,8 @@
   </div>
 </main>
 
-
 <!-- Modal de Senha do Gerente -->
-<div id="modalSenhaGerente" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+<div id="modalSenhaGerente" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
   <div class="bg-gray-800 text-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
     <h2 class="text-2xl font-bold mb-4 text-center">Acesso Restrito</h2>
     <p class="mb-4 text-center">Digite a senha do gerente para continuar:</p>
@@ -80,7 +79,6 @@
     <p id="erroSenha" class="text-red-500 mt-2 text-center hidden">Senha incorreta!</p>
   </div>
 </div>
-
 
 <script src="controle_quartos.js"></script>
 </body>

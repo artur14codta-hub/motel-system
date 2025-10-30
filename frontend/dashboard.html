@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Motel Maçã do Amor - Dashboard</title>
+<title>Dashboard - Motel Maçã do Amor</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -13,7 +13,7 @@
 <aside class="w-64 bg-white shadow-md p-4 flex flex-col gap-4 min-h-screen">
   <h1 class="text-2xl font-bold text-red-600 text-center">Motel Maçã do Amor</h1>
   <nav class="flex flex-col gap-3">
-    <a href="index.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded">
+    <a href="dashboard.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded">
       <i class="fa-solid fa-gauge-high"></i> Dashboard
     </a>
     <a href="quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-bed"></i> Quartos</a>
@@ -33,37 +33,40 @@
 <!-- Main Content -->
 <main class="flex-1 p-6">
   <h2 class="text-3xl font-semibold mb-6">Dashboard</h2>
+
+  <!-- Data Atual -->
   <div id="dataAtual" class="text-gray-600 mb-4"></div>
 
   <!-- Cards -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-    <div class="bg-white p-6 rounded-xl shadow flex flex-col items-center">
-      <h3 class="text-lg font-medium mb-2">Quartos Ocupados</h3>
-      <p id="qtdOcupados" class="text-2xl font-bold text-red-600">0</p>
+    <div class="bg-white p-6 rounded-xl shadow flex items-center justify-between">
+      <div>
+        <h3 class="text-gray-600 text-sm">Faturamento do Dia</h3>
+        <p id="faturamentoDia" class="text-3xl font-bold text-green-600">R$ 0,00</p>
+      </div>
+      <i class="fa-solid fa-money-bill-wave text-green-500 text-3xl"></i>
     </div>
-    <div class="bg-white p-6 rounded-xl shadow flex flex-col items-center">
-      <h3 class="text-lg font-medium mb-2">Faturamento Hoje</h3>
-      <p id="faturamentoDia" class="text-2xl font-bold text-green-600">R$ 0,00</p>
-    </div>
-    <div class="bg-white p-6 rounded-xl shadow flex flex-col items-center">
-      <h3 class="text-lg font-medium mb-2">Produtos em Estoque</h3>
-      <p id="produtosEstoque" class="text-2xl font-bold text-blue-600">0</p>
-    </div>
-  </div>
-</main>
 
-<!-- Modal senha gerente -->
-<div id="modalSenhaGerente" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-  <div class="bg-white p-6 rounded-2xl shadow-lg w-80 text-center">
-    <h2 class="text-lg font-bold text-gray-800 mb-4">Confirmação de Gerente</h2>
-    <input type="password" id="inputSenhaGerente" placeholder="Digite a senha"
-      class="border w-full px-3 py-2 rounded mb-4">
-    <div class="flex justify-center gap-4">
-      <button id="btnConfirmarSenha" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Confirmar</button>
-      <button id="btnCancelarSenha" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">Cancelar</button>
+    <div class="bg-white p-6 rounded-xl shadow flex items-center justify-between">
+      <div>
+        <h3 class="text-gray-600 text-sm">Quartos Ocupados</h3>
+        <p id="qtdOcupados" class="text-3xl font-bold text-red-600">0</p>
+      </div>
+      <i class="fa-solid fa-bed text-red-500 text-3xl"></i>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow flex items-center justify-between">
+      <div>
+        <h3 class="text-gray-600 text-sm">Consumo Total</h3>
+        <p id="consumoTotal" class="text-3xl font-bold text-blue-600">R$ 0,00</p>
+      </div>
+      <i class="fa-solid fa-wine-bottle text-blue-500 text-3xl"></i>
     </div>
   </div>
-</div>
+
+  <!-- Botão Relatório -->
+  <button class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold" onclick="gerarRelatorioDia()">Gerar Relatório PDF</button>
+</main>
 
 <script>
 // Atualiza a data atual
@@ -75,21 +78,34 @@ function atualizarData() {
 
 // Calcula os dados do Dashboard
 function calcularDashboard() {
+  let faturamentoDia = 0;
+  let consumoTotal = 0;
+  let ocupados = 0;
+
   // Quartos
   const quartos = JSON.parse(localStorage.getItem('quartos')) || [];
-  const ocupados = quartos.filter(q => q.status === 'ocupado').length;
-  document.getElementById('qtdOcupados').textContent = ocupados;
+  ocupados = quartos.filter(q => q.status === 'ocupado').length;
 
-  // Faturamento do dia
+  // Consumo
+  const consumos = JSON.parse(localStorage.getItem('consumo')) || [];
+  consumoTotal = consumos.reduce((total, c) => total + (parseFloat(c.valor) || 0), 0);
+
+  // Pagamentos do dia
   const pagamentos = JSON.parse(localStorage.getItem('pagamentos')) || [];
   const hoje = new Date().toLocaleDateString('pt-BR');
-  let faturamentoDia = 0;
-  pagamentos.forEach(p => { if (p.data === hoje) faturamentoDia += parseFloat(p.valor); });
-  document.getElementById('faturamentoDia').textContent = `R$ ${faturamentoDia.toFixed(2)}`;
+  pagamentos.forEach(p => {
+    if (p.data === hoje) faturamentoDia += parseFloat(p.valor);
+  });
 
-  // Produtos em estoque
-  const produtos = JSON.parse(localStorage.getItem('produtos')) || [];
-  document.getElementById('produtosEstoque').textContent = produtos.length;
+  // Atualiza na tela
+  document.getElementById('faturamentoDia').textContent = `R$ ${faturamentoDia.toFixed(2)}`;
+  document.getElementById('consumoTotal').textContent = `R$ ${consumoTotal.toFixed(2)}`;
+  document.getElementById('qtdOcupados').textContent = ocupados;
+}
+
+// Função para gerar relatório
+function gerarRelatorioDia() {
+  alert("📊 Função de geração de relatório será implementada aqui!");
 }
 
 // Inicialização
