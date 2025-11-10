@@ -29,7 +29,10 @@
 
 <!-- Main Content -->
 <main class="flex-1 p-6">
-  <h2 class="text-3xl font-semibold mb-6">Relatório de Consumo</h2>
+  <h2 class="text-3xl font-semibold mb-6">Relatório de Gestão </h2>
+
+  <!-- Faturamento do dia -->
+  <div class="mb-6 text-xl font-semibold">💰 Faturamento :  <span id="faturamentoRelatorio">R$ 0.00</span></div>
 
   <!-- Filtro por Data -->
   <div class="bg-white p-4 rounded-xl shadow mb-6 flex gap-4">
@@ -43,7 +46,7 @@
   </div>
 
   <!-- Tabela de Relatório -->
-  <div class="bg-white p-6 rounded-xl shadow">
+  <div class="bg-white p-6 rounded-xl shadow overflow-x-auto">
     <table class="w-full table-auto border-collapse border border-gray-300">
       <thead>
         <tr class="bg-gray-200">
@@ -53,6 +56,7 @@
           <th class="border px-2 py-2">Saída</th>
           <th class="border px-2 py-2">Consumos</th>
           <th class="border px-2 py-2">Valor Quarto</th>
+          <th class="border px-2 py-2">Forma de Pagamento</th>
           <th class="border px-2 py-2">Total</th>
           <th class="border px-2 py-2">Ações</th>
         </tr>
@@ -90,6 +94,10 @@
         <input type="number" step="0.01" id="editarValorQuarto" class="w-full border rounded-xl p-2">
       </div>
       <div>
+        <label class="block font-semibold mb-1">Forma de Pagamento</label>
+        <input type="text" id="editarPagamentos" class="w-full border rounded-xl p-2">
+      </div>
+      <div>
         <label class="block font-semibold mb-1">Total</label>
         <input type="number" step="0.01" id="editarTotal" class="w-full border rounded-xl p-2">
       </div>
@@ -104,6 +112,7 @@
     </form>
   </div>
 </div>
+
 <!-- Modal de Senha do Gerente -->
 <div id="modalSenhaGerente" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
   <div class="bg-gray-800 text-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
