@@ -62,12 +62,59 @@
   </div>
 </main>
 
+<!-- Modal de Senha do Gerente -->
+<div id="modalSenhaGerente" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+  <div class="bg-white rounded-2xl shadow-xl p-6 w-80 text-center">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">🔒 Acesso Restrito</h2>
+    <p class="text-gray-600 mb-3">Digite a senha do gerente para continuar:</p>
+    <input id="inputSenhaModal" type="password" placeholder="Senha" class="border rounded-lg w-full p-2 text-center outline-none focus:ring-2 focus:ring-red-400">
+    <p id="erroSenha" class="text-red-500 text-sm mt-2 hidden">Senha incorreta!</p>
+    <div class="flex justify-center gap-3 mt-4">
+      <button onclick="verificarSenhaGerente()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Confirmar</button>
+      <button onclick="fecharModalSenha()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <script>
   let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
   const estoqueTableBody = document.getElementById("estoqueTableBody");
   const filtroInput = document.getElementById("filtroInput");
   const totalItensEl = document.getElementById("totalItens");
   const valorTotalEl = document.getElementById("valorTotal");
+
+  const GERENTE_SENHA = "1205";
+  let acaoPendente = null;
+  let gerenteAutenticado = false; // 🔒 controla se a senha já foi verificada
+
+  function abrirModalSenha(acao) {
+    if (gerenteAutenticado) {
+      acao(); // se já autenticado, executa direto
+      return;
+    }
+    acaoPendente = acao;
+    document.getElementById("modalSenhaGerente").classList.remove("hidden");
+    document.getElementById("inputSenhaModal").value = "";
+    document.getElementById("erroSenha").classList.add("hidden");
+  }
+
+  function fecharModalSenha() {
+    document.getElementById("modalSenhaGerente").classList.add("hidden");
+    acaoPendente = null;
+  }
+
+  function verificarSenhaGerente() {
+    const senhaDigitada = document.getElementById("inputSenhaModal").value;
+    const erro = document.getElementById("erroSenha");
+
+    if (senhaDigitada === GERENTE_SENHA) {
+      gerenteAutenticado = true; // ✅ senha liberada até sair da aba
+      fecharModalSenha();
+      if (acaoPendente) acaoPendente();
+    } else {
+      erro.classList.remove("hidden");
+    }
+  }
 
   function carregarEstoque(filtro = "") {
     estoqueTableBody.innerHTML = "";
@@ -100,13 +147,13 @@
         <td class="border px-2 py-1">${p.nome}</td>
         <td class="border px-2 py-1 text-center">
           <input type="number" id="quantidade-${i}" value="${p.quantidade}" 
-            class="border rounded p-1 w-20 text-center" min="0">
+            class="border rounded p-1 w-20 text-center" min="0" readonly>
         </td>
         <td class="border px-2 py-1 text-center">R$ ${parseFloat(p.preco).toFixed(2)}</td>
         <td class="border px-2 py-1 text-center flex justify-center gap-2">
-          <button onclick="alterarQuantidade(${i}, 1)" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded">+1</button>
-          <button onclick="alterarQuantidade(${i}, -1)" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">-1</button>
-          <button onclick="salvarQuantidade(${i})" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">Salvar</button>
+          <button onclick="abrirModalSenha(() => alterarQuantidade(${i}, 1))" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded">+1</button>
+          <button onclick="abrirModalSenha(() => alterarQuantidade(${i}, -1))" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">-1</button>
+          <button onclick="abrirModalSenha(() => salvarQuantidade(${i}))" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">Salvar</button>
         </td>
       `;
       estoqueTableBody.appendChild(tr);
