@@ -19,14 +19,14 @@
     <div class="relative">
       <i class="fa-solid fa-envelope absolute left-3 top-3 text-gray-400"></i>
       <input type="email" id="usuario" placeholder="Email" class="pl-10 border p-3 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-red-500" required>
-      <p id="usuarioError" class="text-red-500 text-sm mt-1 hidden">Email inválido</p>
+      <p id="usuarioError" class="text-red-500 text-sm mt-1 hidden">Email não encontrado</p>
     </div>
     <div class="relative">
       <i class="fa-solid fa-lock absolute left-3 top-3 text-gray-400"></i>
       <input type="password" id="senha" placeholder="Senha" class="pl-10 border p-3 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-red-500" required>
       <p id="senhaError" class="text-red-500 text-sm mt-1 hidden">Senha incorreta</p>
     </div>
-    <button type="submit" id="loginBtn" class="bg-red-600 hover:bg-red-700 text-white p-3 rounded-xl font-semibold mt-2 transition-all duration-200 disabled:opacity-50">
+    <button type="submit" id="loginBtn" class="bg-red-600 hover:bg-red-700 text-white p-3 rounded-xl font-semibold mt-2 transition-all duration-200">
       Entrar
     </button>
   </form>
@@ -47,30 +47,33 @@
   loginForm.addEventListener('submit', function(e) {
     e.preventDefault();
 
-    const usuarioValue = usuario.value.trim();
-    const senhaValue = senha.value.trim();
-
-    // Reset dos erros
+    const email = usuario.value.trim();
+    const senhaValor = senha.value.trim();
     usuarioError.classList.add('hidden');
     senhaError.classList.add('hidden');
 
-    // Validação
-    if(usuarioValue === "artur14codta@gmail.com" && senhaValue === "12345") {
-      alert("Login realizado com sucesso!");
-      window.location.href = "quartos.html";
-    } else {
-      if(usuarioValue !== "artur14codta@gmail.com") {
-        usuarioError.classList.remove('hidden');
-      }
-      if(senhaValue !== "12345") {
-        senhaError.classList.remove('hidden');
-      }
+    const funcionarios = JSON.parse(localStorage.getItem('funcionarios')) || [];
+
+    const user = funcionarios.find(f => f.email === email);
+
+    if (!user) {
+      usuarioError.classList.remove('hidden');
+      return;
     }
+
+    if (user.senha !== senhaValor) {
+      senhaError.classList.remove('hidden');
+      return;
+    }
+
+    // Salva o usuário logado
+    localStorage.setItem('usuarioLogado', JSON.stringify(user));
+    alert(`Bem-vindo, ${user.nome}!`);
+    window.location.href = 'quartos.html';
   });
 </script>
 
 <style>
-  /* Animação suave de fade-in */
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
