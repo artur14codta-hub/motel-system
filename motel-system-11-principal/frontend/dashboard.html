@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - Motel Maçã do Amor</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen flex">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white shadow-md p-4 flex flex-col gap-4">
+    <h1 class="text-2xl font-bold text-red-600 text-center">Motel Maçã do Amor</h1>
+    <nav class="flex flex-col gap-3">
+      <a href="dashboard.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+      <a href="quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-bed"></i> Quartos</a>
+      <a href="controle_quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-sliders"></i> Controle de Quartos</a>
+      <a href="consumo.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-wine-bottle"></i> Consumo</a>
+      <a href="pagamento.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-credit-card"></i> Pagamento</a>
+      <a href="relatorio.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-chart-line"></i> Relatórios</a>
+      <a href="produto.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-box"></i> Produtos</a>
+      <a href="estoque.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-warehouse"></i> Estoque</a>
+      <a href="usuarios.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-users"></i> Usuários</a>
+    </nav>
+    <div class="mt-auto">
+      <button id="btnSair" class="flex items-center gap-2 p-2 text-red-600 hover:bg-gray-200 rounded w-full">
+        <i class="fa-solid fa-right-from-bracket"></i> Sair
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 p-6 overflow-auto">
+    <div class="flex justify-between items-center mb-6">
+      <div id="usuarioAtivo" class="text-gray-800 font-semibold text-lg"></div>
+      <div class="flex items-center gap-2">
+        <input type="date" id="filtroData" class="border px-3 py-2 rounded">
+        <button id="btnFiltrar" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Filtrar</button>
+      </div>
+    </div>
+
+    <!-- Faturamento -->
+    <div class="bg-white p-6 rounded-xl shadow mb-6">
+      <h2 class="text-2xl font-bold mb-4">Faturamento do Dia</h2>
+      <p id="faturamentoDia" class="text-xl font-semibold">R$ 0,00</p>
+    </div>
+
+    <!-- Painel de Turnos -->
+    <div class="bg-white p-6 rounded-xl shadow">
+      <h2 class="text-2xl font-bold mb-4">Turnos de Funcionários</h2>
+      <table class="min-w-full text-left border">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="px-4 py-2 border">Funcionário</th>
+            <th class="px-4 py-2 border">Início</th>
+            <th class="px-4 py-2 border">Situação</th>
+            <th class="px-4 py-2 border">Fim</th>
+            <th class="px-4 py-2 border">Tempo de Permanência</th>
+            <th class="px-4 py-2 border">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tabelaTurnos">
+          <!-- Turnos serão preenchidos dinamicamente -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Modal do Gerente -->
+  <div id="modalGerente" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-xl shadow-lg w-96">
+      <h3 class="text-xl font-bold mb-4">Autenticação do Gerente</h3>
+      <input id="senhaGerente" type="password" placeholder="Digite a senha do gerente"
+        class="w-full border px-3 py-2 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+      <div class="flex justify-end gap-3">
+        <button id="btnCancelarModal" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancelar</button>
+        <button id="btnConfirmarModal" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+<script src="dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quartos - Motel Maçã do Amor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="flex bg-gray-100 min-h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white shadow-md p-4 flex flex-col gap-4">
+    <h1 class="text-2xl font-bold text-red-600 text-center">Motel Maçã do Amor</h1>
+    <nav class="flex flex-col gap-3">
+      <a href="dashboard.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+      <a href="quartos.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded"><i class="fa-solid fa-bed"></i> Quartos</a>
+      <a href="controle_quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-sliders"></i> Controle de Quartos</a>
+      <a href="consumo.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-wine-bottle"></i> Consumo</a>
+      <a href="pagamento.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-credit-card"></i> Pagamento</a>
+      <a href="relatorio.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-chart-line"></i> Relatórios</a>
+      <a href="produto.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-box"></i> Produtos</a>
+      <a href="estoque.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-warehouse"></i> Estoque</a>
+      <a href="usuarios.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-users"></i> Usuários</a>|
+    </nav>
+    <div class="mt-auto">
+      <a href="login.html" class="flex items-center gap-2 p-2 text-red-600 hover:bg-gray-200 rounded"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 p-6">
+    <h2 class="text-3xl font-semibold mb-6">Quartos</h2>
+
+    <!-- Painel de Quartos -->
+    <div id="quartosPanel" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+  </main>
+
+  <script>
+    function listarQuartos() {
+      const quartosPanel = document.getElementById('quartosPanel');
+      quartosPanel.innerHTML = '';
+
+      let quartos = JSON.parse(localStorage.getItem('quartos')) || [];
+      let entradas = JSON.parse(localStorage.getItem('entradasQuartos')) || {};
+
+      quartos.forEach((quarto, index) => {
+        let corStatus = '';
+        if (quarto.status === 'livre') corStatus = 'bg-green-400';
+        else if (quarto.status === 'ocupado') corStatus = 'bg-red-500';
+        else if (quarto.status === 'limpeza') corStatus = 'bg-yellow-400';
+
+        let textoStatus =
+          quarto.status === 'livre' ? 'Disponível' :
+          quarto.status === 'ocupado' ? 'Ocupado' :
+          'Em Limpeza';
+
+        const div = document.createElement('div');
+        div.className = `p-4 rounded-xl shadow text-white cursor-pointer ${corStatus}`;
+        div.innerHTML = `
+          <h3 class="text-xl font-bold mb-2">${quarto.nome}</h3>
+          <p>Valor: R$ ${quarto.valor}</p>
+          <p>Status: ${textoStatus}</p>
+          <p id="entrada-${index}" class="text-sm"></p>
+          <p id="permanencia-${index}" class="text-sm"></p>
+        `;
+
+        // Atualiza tempo de permanência em tempo real
+        if (quarto.status === 'ocupado' && entradas[index]) {
+          const entradaTime = new Date(entradas[index]);
+          const permanenciaEl = div.querySelector(`#permanencia-${index}`);
+
+          function atualizarTempo() {
+            const agora = new Date();
+            const diffMs = agora - entradaTime;
+            const segundos = Math.floor((diffMs / 1000) % 60);
+            const minutos = Math.floor((diffMs / (1000 * 60)) % 60);
+            const horas = Math.floor(diffMs / (1000 * 60 * 60));
+            permanenciaEl.textContent = `🕒 Permanência: ${horas}h ${minutos}m ${segundos}s`;
+          }
+
+          setInterval(atualizarTempo, 1000);
+          atualizarTempo();
+
+          div.querySelector(`#entrada-${index}`).textContent =
+            `📅 Entrada: ${entradaTime.toLocaleTimeString()}`;
+        } else {
+          div.querySelector(`#entrada-${index}`).textContent = '';
+          div.querySelector(`#permanencia-${index}`).textContent = '';
+        }
+
+        div.addEventListener('click', () => {
+          if (quarto.status === 'livre') {
+            quarto.status = 'ocupado';
+            entradas[index] = new Date().toISOString();
+          } else if (quarto.status === 'ocupado') {
+            quarto.status = 'limpeza';
+            delete entradas[index];
+          } else {
+            quarto.status = 'livre';
+            delete entradas[index];
+          }
+
+          localStorage.setItem('quartos', JSON.stringify(quartos));
+          localStorage.setItem('entradasQuartos', JSON.stringify(entradas));
+          listarQuartos();
+        });
+
+        quartosPanel.appendChild(div);
+      });
+    }
+
+    listarQuartos();
+  </script>
+
+</body>
+</html>

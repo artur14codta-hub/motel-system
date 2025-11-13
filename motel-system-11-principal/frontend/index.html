@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motel Maçã do Amor - Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="flex bg-gray-100 min-h-screen">
+
+<!-- Sidebar -->
+<aside class="w-64 bg-white shadow-md p-4 flex flex-col gap-4 min-h-screen">
+  <h1 class="text-2xl font-bold text-red-600 text-center">Motel Maçã do Amor</h1>
+  <nav class="flex flex-col gap-3">
+    <a href="index.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded">
+      <i class="fa-solid fa-gauge-high"></i> Dashboard
+    </a>
+    <a href="quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-bed"></i> Quartos</a>
+    <a href="controle_quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-sliders"></i> Controle de Quartos</a>
+    <a href="consumo.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-wine-bottle"></i> Consumo</a>
+    <a href="pagamento.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-credit-card"></i> Pagamento</a>
+    <a href="relatorio.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-chart-line"></i> Relatórios</a>
+    <a href="produto.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-box"></i> Produtos</a>
+    <a href="estoque.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-warehouse"></i> Estoque</a>
+    <a href="usuarios.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-users"></i> Usuários</a>
+    <a href="dashboard.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+  </nav>
+  <div class="mt-auto">
+    <a href="login.html" class="flex items-center gap-2 p-2 text-red-600 hover:bg-gray-200 rounded"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="flex-1 p-6">
+  <h2 class="text-3xl font-semibold mb-6">Dashboard</h2>
+  <div id="dataAtual" class="text-gray-600 mb-4"></div>
+
+  <!-- Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+    <div class="bg-white p-6 rounded-xl shadow flex flex-col items-center">
+      <h3 class="text-lg font-medium mb-2">Quartos Ocupados</h3>
+      <p id="qtdOcupados" class="text-2xl font-bold text-red-600">0</p>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow flex flex-col items-center">
+      <h3 class="text-lg font-medium mb-2">Faturamento Hoje</h3>
+      <p id="faturamentoDia" class="text-2xl font-bold text-green-600">R$ 0,00</p>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow flex flex-col items-center">
+      <h3 class="text-lg font-medium mb-2">Produtos em Estoque</h3>
+      <p id="produtosEstoque" class="text-2xl font-bold text-blue-600">0</p>
+    </div>
+  </div>
+</main>
+
+<!-- Modal senha gerente -->
+<div id="modalSenhaGerente" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+  <div class="bg-white p-6 rounded-2xl shadow-lg w-80 text-center">
+    <h2 class="text-lg font-bold text-gray-800 mb-4">Confirmação de Gerente</h2>
+    <input type="password" id="inputSenhaGerente" placeholder="Digite a senha"
+      class="border w-full px-3 py-2 rounded mb-4">
+    <div class="flex justify-center gap-4">
+      <button id="btnConfirmarSenha" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Confirmar</button>
+      <button id="btnCancelarSenha" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Atualiza a data atual
+function atualizarData() {
+  const data = new Date();
+  const opcoes = { day: '2-digit', month: 'long', year: 'numeric' };
+  document.getElementById('dataAtual').textContent = "📅 " + data.toLocaleDateString('pt-BR', opcoes);
+}
+
+// Calcula os dados do Dashboard
+function calcularDashboard() {
+  // Quartos
+  const quartos = JSON.parse(localStorage.getItem('quartos')) || [];
+  const ocupados = quartos.filter(q => q.status === 'ocupado').length;
+  document.getElementById('qtdOcupados').textContent = ocupados;
+
+  // Faturamento do dia
+  const pagamentos = JSON.parse(localStorage.getItem('pagamentos')) || [];
+  const hoje = new Date().toLocaleDateString('pt-BR');
+  let faturamentoDia = 0;
+  pagamentos.forEach(p => { if (p.data === hoje) faturamentoDia += parseFloat(p.valor); });
+  document.getElementById('faturamentoDia').textContent = `R$ ${faturamentoDia.toFixed(2)}`;
+
+  // Produtos em estoque
+  const produtos = JSON.parse(localStorage.getItem('produtos')) || [];
+  document.getElementById('produtosEstoque').textContent = produtos.length;
+}
+
+// Inicialização
+window.addEventListener('load', () => {
+  atualizarData();
+  calcularDashboard();
+  setInterval(calcularDashboard, 30000); // atualiza a cada 30s
+});
+</script>
+
+</body>
+</html>

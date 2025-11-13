@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Motel Maçã do Amor</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-r from-red-500 to-pink-500 min-h-screen flex items-center justify-center">
+
+<div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 animate-fadeIn">
+  <div class="flex flex-col items-center mb-6">
+    <i class="fa-solid fa-apple-whole text-red-600 text-5xl mb-2"></i>
+    <h1 class="text-3xl font-bold text-red-600">Motel Maçã do Amor</h1>
+  </div>
+
+  <form id="loginForm" class="flex flex-col gap-4">
+    <div class="relative">
+      <i class="fa-solid fa-envelope absolute left-3 top-3 text-gray-400"></i>
+      <input type="email" id="usuario" placeholder="Email" class="pl-10 border p-3 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-red-500" required>
+      <p id="usuarioError" class="text-red-500 text-sm mt-1 hidden">Email não encontrado</p>
+    </div>
+    <div class="relative">
+      <i class="fa-solid fa-lock absolute left-3 top-3 text-gray-400"></i>
+      <input type="password" id="senha" placeholder="Senha" class="pl-10 border p-3 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-red-500" required>
+      <p id="senhaError" class="text-red-500 text-sm mt-1 hidden">Senha incorreta</p>
+    </div>
+    <button type="submit" id="loginBtn" class="bg-red-600 hover:bg-red-700 text-white p-3 rounded-xl font-semibold mt-2 transition-all duration-200">
+      Entrar
+    </button>
+  </form>
+
+  <p class="text-center text-gray-400 mt-4 text-sm">
+    Esqueceu sua senha? 
+    <a href="#" class="text-red-600 font-semibold hover:underline">Recuperar</a>
+  </p>
+</div>
+
+<script>
+  const loginForm = document.getElementById('loginForm');
+  const usuario = document.getElementById('usuario');
+  const senha = document.getElementById('senha');
+  const usuarioError = document.getElementById('usuarioError');
+  const senhaError = document.getElementById('senhaError');
+
+  loginForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const email = usuario.value.trim();
+    const senhaValor = senha.value.trim();
+    usuarioError.classList.add('hidden');
+    senhaError.classList.add('hidden');
+
+    const funcionarios = JSON.parse(localStorage.getItem('funcionarios')) || [];
+
+    const user = funcionarios.find(f => f.email === email);
+
+    if (!user) {
+      usuarioError.classList.remove('hidden');
+      return;
+    }
+
+    if (user.senha !== senhaValor) {
+      senhaError.classList.remove('hidden');
+      return;
+    }
+
+    // Cria objeto com turno iniciado
+    const usuarioLogado = {
+      nome: user.nome,
+      email: user.email,
+      inicioTurno: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    // Salva o usuário logado no localStorage
+    localStorage.setItem('usuarioLogado', JSON.stringify(usuarioLogado));
+
+    alert(`Bem-vindo, ${usuarioLogado.nome}! Turno iniciado às ${usuarioLogado.inicioTurno}`);
+    window.location.href = 'quartos.html';
+  });
+</script>
+
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fadeIn {
+    animation: fadeIn 0.6s ease-out;
+  }
+</style>
+
+</body>
+</html>

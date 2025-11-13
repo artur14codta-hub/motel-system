@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Produtos - Motel Maçã do Amor</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="flex bg-gray-100 min-h-screen">
+
+<!-- Sidebar -->
+<aside class="w-64 bg-white shadow-md p-4 flex flex-col gap-4">
+  <h1 class="text-2xl font-bold text-red-600 text-center">Motel Maçã do Amor</h1>
+  <nav class="flex flex-col gap-3">
+    <a href="quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-bed"></i> Quartos</a>
+    <a href="controle_quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-sliders"></i> Controle de Quartos</a>
+    <a href="consumo.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-wine-bottle"></i> Consumo</a>
+    <a href="pagamento.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-credit-card"></i> Pagamento</a>
+    <a href="relatorio.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-chart-line"></i> Relatórios</a>
+    <a href="produto.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded"><i class="fa-solid fa-box"></i> Produtos</a>
+    <a href="estoque.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-warehouse"></i> Estoque</a>
+    <a href="usuarios.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-users"></i> Usuários</a>
+  </nav>
+  <div class="mt-auto">
+    <a href="login.html" class="flex items-center gap-2 p-2 text-red-600 hover:bg-gray-200 rounded"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="flex-1 p-6">
+  <h2 class="text-3xl font-semibold mb-6">Produtos</h2>
+
+  <!-- Formulário de Cadastro -->
+  <div class="bg-white p-6 rounded-xl shadow mb-6">
+    <form id="produtoForm" class="flex flex-col gap-4">
+      <div class="flex gap-4">
+        <input type="text" id="produtoNome" placeholder="Nome do Produto" class="border rounded-xl p-2 flex-1" required>
+        <input type="number" id="produtoQuantidade" placeholder="Quantidade" class="border rounded-xl p-2 w-32" required>
+        <input type="number" id="produtoPreco" placeholder="Preço" step="0.01" class="border rounded-xl p-2 w-32" required>
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl">Adicionar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tabela de Produtos -->
+  <div class="bg-white p-6 rounded-xl shadow">
+    <table class="w-full table-auto border-collapse border border-gray-300">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="border px-2 py-2">Nome</th>
+          <th class="border px-2 py-2">Quantidade</th>
+          <th class="border px-2 py-2">Preço</th>
+          <th class="border px-2 py-2">Ações</th>
+        </tr>
+      </thead>
+      <tbody id="produtoTableBody"></tbody>
+    </table>
+  </div>
+</main>
+
+<!-- Modal de Edição -->
+<div id="editarProdutoModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+  <div class="bg-white rounded-xl shadow-lg w-full max-w-lg p-6 relative">
+    <h2 class="text-2xl font-bold mb-4">Editar Produto</h2>
+    <form id="editarProdutoForm" class="flex flex-col gap-4">
+      <input type="text" id="editarProdutoNome" placeholder="Nome" class="border rounded-xl p-2" required>
+      <input type="number" id="editarProdutoQuantidade" placeholder="Quantidade" class="border rounded-xl p-2" required>
+      <input type="number" step="0.01" id="editarProdutoPreco" placeholder="Preço" class="border rounded-xl p-2" required>
+      <div class="flex justify-end gap-2 mt-4">
+        <button type="button" onclick="fecharEditarModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-xl">Cancelar</button>
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+// Seletores
+const produtoTableBody = document.getElementById("produtoTableBody");
+const produtoForm = document.getElementById("produtoForm");
+const produtoNome = document.getElementById("produtoNome");
+const produtoQuantidade = document.getElementById("produtoQuantidade");
+const produtoPreco = document.getElementById("produtoPreco");
+
+const editarProdutoModal = document.getElementById("editarProdutoModal");
+const editarProdutoForm = document.getElementById("editarProdutoForm");
+const editarProdutoNome = document.getElementById("editarProdutoNome");
+const editarProdutoQuantidade = document.getElementById("editarProdutoQuantidade");
+const editarProdutoPreco = document.getElementById("editarProdutoPreco");
+
+let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
+let editarIndex = null;
+
+// Função para salvar produtos
+function salvarProdutos() {
+  localStorage.setItem("produtos", JSON.stringify(produtos));
+  window.dispatchEvent(new Event("storage"));
+}
+
+// Função para carregar produtos
+function carregarProdutos() {
+  produtoTableBody.innerHTML = "";
+  produtos.forEach((p, i) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="border px-2 py-1">${p.nome}</td>
+      <td class="border px-2 py-1">${p.quantidade}</td>
+      <td class="border px-2 py-1">R$ ${parseFloat(p.preco).toFixed(2)}</td>
+      <td class="border px-2 py-1 flex gap-2">
+        <button onclick="abrirEditarProduto(${i})" class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded">Editar</button>
+        <button onclick="apagarProduto(${i})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded">Apagar</button>
+      </td>
+    `;
+    produtoTableBody.appendChild(tr);
+  });
+}
+
+// Adicionar produto
+produtoForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const nome = produtoNome.value.trim();
+  const quantidade = parseInt(produtoQuantidade.value);
+  const preco = parseFloat(produtoPreco.value);
+
+  if (!nome || isNaN(quantidade) || isNaN(preco)) {
+    alert("Preencha todos os campos corretamente!");
+    return;
+  }
+
+  produtos.push({ nome, quantidade, preco });
+  salvarProdutos();
+
+  produtoNome.value = "";
+  produtoQuantidade.value = "";
+  produtoPreco.value = "";
+
+  carregarProdutos();
+});
+
+// Apagar produto
+function apagarProduto(index) {
+  if (!confirm("Deseja realmente apagar este produto?")) return;
+  produtos.splice(index, 1);
+  salvarProdutos();
+  carregarProdutos();
+}
+
+// Abrir modal
+function abrirEditarProduto(index) {
+  editarIndex = index;
+  const p = produtos[index];
+  editarProdutoNome.value = p.nome;
+  editarProdutoQuantidade.value = p.quantidade;
+  editarProdutoPreco.value = p.preco;
+  editarProdutoModal.classList.remove("hidden");
+}
+
+// Fechar modal
+function fecharEditarModal() {
+  editarProdutoModal.classList.add("hidden");
+}
+
+// Salvar edição
+editarProdutoForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const nome = editarProdutoNome.value.trim();
+  const quantidade = parseInt(editarProdutoQuantidade.value);
+  const preco = parseFloat(editarProdutoPreco.value);
+
+  if (!nome || isNaN(quantidade) || isNaN(preco)) {
+    alert("Preencha todos os campos corretamente!");
+    return;
+  }
+
+  produtos[editarIndex] = { nome, quantidade, preco };
+  salvarProdutos();
+  fecharEditarModal();
+  carregarProdutos();
+});
+
+// Inicializa
+carregarProdutos();
+</script>
+<!-- Modal de Senha do Gerente -->
+<div id="modalSenhaGerente" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+  <div class="bg-gray-800 text-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
+    <h2 class="text-2xl font-bold mb-4 text-center">Acesso Restrito</h2>
+    <p class="mb-4 text-center">Digite a senha do gerente para continuar:</p>
+    <input type="password" id="inputSenhaModal" class="w-full p-3 rounded-xl text-black mb-4" placeholder="Senha do gerente">
+    <div class="flex justify-end gap-2">
+      <button onclick="fecharModalSenha()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-xl">Cancelar</button>
+      <button onclick="verificarSenhaGerente()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl">Confirmar</button>
+    </div>
+    <p id="erroSenha" class="text-red-500 mt-2 text-center hidden">Senha incorreta!</p>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consumo - Motel Maçã do Amor</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="flex bg-gray-100 min-h-screen">
+
+<!-- Sidebar -->
+<aside class="w-64 bg-white shadow-md p-4 flex flex-col gap-4">
+  <h1 class="text-2xl font-bold text-red-600 text-center">Motel Maçã do Amor</h1>
+  <nav class="flex flex-col gap-3">
+    <a href="quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-bed"></i> Quartos</a>
+    <a href="controle_quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-sliders"></i> Controle de Quartos</a>
+    <a href="consumo.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded"><i class="fa-solid fa-wine-bottle"></i> Consumo</a>
+    <a href="pagamento.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-credit-card"></i> Pagamento</a>
+    <a href="relatorio.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-chart-line"></i> Relatórios</a>
+    <a href="produto.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-box"></i> Produtos</a>
+    <a href="estoque.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-warehouse"></i> Estoque</a>
+    <a href="usuarios.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-users"></i> Usuários</a>
+  </nav>
+  <div class="mt-auto">
+    <a href="login.html" class="flex items-center gap-2 p-2 text-red-600 hover:bg-gray-200 rounded"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="flex-1 p-6">
+  <h2 class="text-3xl font-semibold mb-6">Registro de Consumo</h2>
+
+  <!-- Seleção do Quarto -->
+  <div class="bg-white p-6 rounded-xl shadow max-w-lg mb-6">
+    <label class="block text-gray-700 mb-2">Selecione o Quarto:</label>
+    <select id="quartoSelect" class="w-full p-3 border rounded-xl"></select>
+  </div>
+
+  <!-- Lista de Produtos -->
+  <div class="bg-white p-6 rounded-xl shadow max-w-3xl mb-6">
+    <h3 class="text-2xl font-semibold mb-4">Itens de Consumo</h3>
+    <table class="w-full table-auto border-collapse border border-gray-300">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="border px-4 py-2">Produto</th>
+          <th class="border px-4 py-2">Preço (R$)</th>
+          <th class="border px-4 py-2">Adicionar</th>
+        </tr>
+      </thead>
+      <tbody id="produtosTableBody">
+        <!-- Produtos cadastrados carregados pelo JS -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Carrinho de Consumo -->
+  <div class="bg-white p-6 rounded-xl shadow max-w-3xl">
+    <h3 class="text-2xl font-semibold mb-4">Carrinho de Consumo</h3>
+    <table class="w-full table-auto border-collapse border border-gray-300">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="border px-4 py-2">Item</th>
+          <th class="border px-4 py-2">Valor (R$)</th>
+          <th class="border px-4 py-2">Remover</th>
+        </tr>
+      </thead>
+      <tbody id="consumoTableBody">
+        <!-- Itens adicionados ao carrinho -->
+      </tbody>
+    </table>
+    <p class="text-right mt-4 font-bold text-xl">Total: R$ <span id="totalConsumo">0</span></p>
+
+    <!-- BOTÃO IR PARA PAGAMENTO -->
+    <button id="irPagamentoBtn" class="mt-6 w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded-xl text-lg">
+      Ir para Pagamento
+    </button>
+  </div>
+</main>
+
+<script src="consumo.js"></script>
+</body>
+</html>
