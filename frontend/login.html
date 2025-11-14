@@ -66,9 +66,17 @@
       return;
     }
 
-    // Salva o usuário logado
-    localStorage.setItem('usuarioLogado', JSON.stringify(user));
-    alert(`Bem-vindo, ${user.nome}!`);
+    // Cria objeto com turno iniciado
+    const usuarioLogado = {
+      nome: user.nome,
+      email: user.email,
+      inicioTurno: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    // Salva o usuário logado no localStorage
+    localStorage.setItem('usuarioLogado', JSON.stringify(usuarioLogado));
+
+    alert(`Bem-vindo, ${usuarioLogado.nome}! Turno iniciado às ${usuarioLogado.inicioTurno}`);
     window.location.href = 'quartos.html';
   });
 </script>
