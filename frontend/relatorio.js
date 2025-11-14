@@ -20,9 +20,16 @@ const inputSenhaModal = document.getElementById("inputSenhaModal");
 const erroSenha = document.getElementById("erroSenha");
 
 let registroAtualIndex = null;
-let acaoPendente = null; // "editar" ou "apagar"
+let acaoPendente = null;
 
-// ---------- Atualiza faturamento ----------  
+// ---------- Função NOVA — mostra SOMENTE o horário ----------
+function formatarHora(horaString) {
+  if (!horaString) return "--:--";
+  // garantia: remove espaços, valida formato simples HH:MM ou HH:MM:SS
+  return horaString.trim();
+}
+
+// ---------- Atualiza faturamento ----------
 function atualizarFaturamento(registros) {
   let total = 0;
   registros.forEach(r => {
@@ -35,7 +42,6 @@ function atualizarFaturamento(registros) {
 function carregarRelatorio() {
   const registros = JSON.parse(localStorage.getItem("relatorio")) || [];
 
-  // Ordenar por data e hora de saída (mais recentes primeiro)
   registros.sort((a,b)=>{
     const dataA = new Date(`${a.data} ${a.horaSaida || "00:00"}`);
     const dataB = new Date(`${b.data} ${b.horaSaida || "00:00"}`);
@@ -45,7 +51,9 @@ function carregarRelatorio() {
   relatorioTableBody.innerHTML = "";
 
   registros.forEach((r,i)=>{
-    const horaEntrada = r.horaEntrada || "--:--";
+    const horaEntrada = formatarHora(r.horaEntrada);
+    const horaSaida = formatarHora(r.horaSaida);
+
     const formaPagamentoTexto = r.pagamentos
       ? r.pagamentos.map(p => `${p.tipo} R$ ${parseFloat(p.valor).toFixed(2)}`).join("<br>")
       : "-";
@@ -55,7 +63,7 @@ function carregarRelatorio() {
       <td class="border px-2 py-1">${r.quarto}</td>
       <td class="border px-2 py-1">${r.data}</td>
       <td class="border px-2 py-1">${horaEntrada}</td>
-      <td class="border px-2 py-1">${r.horaSaida || "--:--"}</td>
+      <td class="border px-2 py-1">${horaSaida}</td>
       <td class="border px-2 py-1">${
         r.consumos && r.consumos.length>0
           ? r.consumos.map(c=>`${c.nome} (R$ ${parseFloat(c.valor).toFixed(2)})`).join(", ")
@@ -79,6 +87,7 @@ function carregarRelatorio() {
 // ---------- Filtrar por data ----------
 function filtrarPorData() {
   const dataSelecionada = filtroData.value;
+
   const registros = JSON.parse(localStorage.getItem("relatorio")) || [];
 
   if(!dataSelecionada) return carregarRelatorio();
@@ -88,7 +97,9 @@ function filtrarPorData() {
   relatorioTableBody.innerHTML = "";
 
   filtrados.forEach((r,i)=>{
-    const horaEntrada = r.horaEntrada || "--:--";
+    const horaEntrada = formatarHora(r.horaEntrada);
+    const horaSaida = formatarHora(r.horaSaida);
+
     const formaPagamentoTexto = r.pagamentos
       ? r.pagamentos.map(p => `${p.tipo} R$ ${parseFloat(p.valor).toFixed(2)}`).join("<br>")
       : "-";
@@ -98,7 +109,7 @@ function filtrarPorData() {
       <td class="border px-2 py-1">${r.quarto}</td>
       <td class="border px-2 py-1">${r.data}</td>
       <td class="border px-2 py-1">${horaEntrada}</td>
-      <td class="border px-2 py-1">${r.horaSaida || "--:--"}</td>
+      <td class="border px-2 py-1">${horaSaida}</td>
       <td class="border px-2 py-1">${
         r.consumos && r.consumos.length>0
           ? r.consumos.map(c=>`${c.nome} (R$ ${parseFloat(c.valor).toFixed(2)})`).join(", ")
@@ -184,7 +195,6 @@ editarForm.addEventListener("submit", e=>{
   r.valorQuarto = parseFloat(editarValorQuarto.value) || 0;
   r.total = parseFloat(editarTotal.value) || 0;
 
-  // Convertendo o campo de pagamentos em array de objetos
   const pagamentosRaw = editarPagamentos.value.split(",");
   r.pagamentos = pagamentosRaw.map(p=>{
     const [tipo, valor] = p.trim().split(" ");
@@ -211,7 +221,9 @@ function apagarRegistroConfirmado(index){
 function imprimirComprovante(index){
   const registros = JSON.parse(localStorage.getItem("relatorio")) || [];
   const r = registros[index];
-  const horaEntrada = r.horaEntrada || "--:--";
+
+  const horaEntrada = formatarHora(r.horaEntrada);
+  const horaSaida = formatarHora(r.horaSaida);
 
   const formaPagamentoTexto = r.pagamentos
     ? r.pagamentos.map(p=>`${p.tipo} - R$ ${parseFloat(p.valor).toFixed(2)}`).join("<br>")
@@ -226,7 +238,7 @@ function imprimirComprovante(index){
       <p><strong>Quarto:</strong> ${r.quarto}</p>
       <p><strong>Data:</strong> ${r.data}</p>
       <p><strong>Entrada:</strong> ${horaEntrada}</p>
-      <p><strong>Saída:</strong> ${r.horaSaida || "--:--"}</p>
+      <p><strong>Saída:</strong> ${horaSaida}</p>
       <h3>Consumos:</h3>
       <ul>${
         r.consumos && r.consumos.length>0
