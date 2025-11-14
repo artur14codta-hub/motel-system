@@ -16,12 +16,11 @@ function carregarQuartosPagamento() {
     quartoPagamentoSelect.innerHTML += `<option value="${i}">${q.nome}</option>`;
   });
 
-  // Se veio da tela de consumo (armazenado em localStorage)
   const quartoIndex = localStorage.getItem("quartoSelecionado");
   if (quartoIndex !== null) {
     quartoPagamentoSelect.value = quartoIndex;
     quartoPagamentoSelect.dispatchEvent(new Event("change"));
-    localStorage.removeItem("quartoSelecionado"); // limpar para não repetir
+    localStorage.removeItem("quartoSelecionado");
   }
 }
 
@@ -45,12 +44,11 @@ quartoPagamentoSelect.addEventListener("change", () => {
   valorQuarto = parseFloat(quartos[quartoSelecionado].valor) || 0;
   valorQuartoSpan.innerText = valorQuarto.toFixed(2);
 
-  // Valor total do consumo desse quarto
+  // Valor total do consumo
   const consumoQuarto = consumos[quartoSelecionado] || [];
   valorConsumo = consumoQuarto.reduce((total, item) => total + parseFloat(item.valor), 0);
   valorConsumoSpan.innerText = valorConsumo.toFixed(2);
 
-  // Total geral
   valorTotalSpan.innerText = (valorQuarto + valorConsumo).toFixed(2);
 });
 
@@ -63,7 +61,6 @@ function finalizarPagamento() {
 
   const total = valorQuarto + valorConsumo;
 
-  // Capturar valores pagos
   const pgDinheiro = parseFloat(document.getElementById("pgtoDinheiro").value) || 0;
   const pgPix = parseFloat(document.getElementById("pgtoPix").value) || 0;
   const pgCredito = parseFloat(document.getElementById("pgtoCredito").value) || 0;
@@ -77,39 +74,53 @@ function finalizarPagamento() {
   }
 
   const agora = new Date();
+
+  // SOMENTE HORÁRIO ✔️
+  const horaSaida = agora.toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
+
   const dataHoje = agora.toISOString().split("T")[0];
-  const horaSaida = agora.toLocaleTimeString();
 
   const quartos = JSON.parse(localStorage.getItem("quartos")) || [];
-  const horaEntrada = quartos[quartoSelecionado].horaEntrada || "--:--";
+  const consumos = JSON.parse(localStorage.getItem("consumos")) || {};
+
+  // 👉 GARANTIR QUE A HORA DE ENTRADA ESTEJA EM FORMATO CORRETO
+  if (!quartos[quartoSelecionado].horaEntrada) {
+    quartos[quartoSelecionado].horaEntrada = agora.toLocaleTimeString("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    });
+  }
 
   // Salvar no relatório
   let relatorio = JSON.parse(localStorage.getItem("relatorio")) || [];
   relatorio.push({
     quarto: quartos[quartoSelecionado].nome,
     data: dataHoje,
-    horaEntrada: horaEntrada,
+    horaEntrada: quartos[quartoSelecionado].horaEntrada, // ✔️ SÓ HORÁRIO
     horaSaida: horaSaida,
     valorQuarto: valorQuarto,
     valorConsumo: valorConsumo,
     total: total,
-    pagamento: {
-      dinheiro: pgDinheiro,
-      pix: pgPix,
-      credito: pgCredito,
-      debito: pgDebito
-    }
+    consumos: consumos[quartoSelecionado] || [],
+    pagamentos: [
+      { tipo: "Dinheiro", valor: pgDinheiro },
+      { tipo: "PIX", valor: pgPix },
+      { tipo: "Crédito", valor: pgCredito },
+      { tipo: "Débito", valor: pgDebito }
+    ].filter(p => p.valor > 0)
   });
   localStorage.setItem("relatorio", JSON.stringify(relatorio));
 
-  // Atualizar o estoque
+  // Atualizar estoque
   const produtos = JSON.parse(localStorage.getItem("produtos")) || [];
-  const consumos = JSON.parse(localStorage.getItem("consumos")) || {};
   (consumos[quartoSelecionado] || []).forEach(item => {
     const produto = produtos.find(p => p.nome === item.nome);
-    if (produto) {
-      produto.quantidade = Math.max(0, produto.quantidade - 1);
-    }
+    if (produto) produto.quantidade = Math.max(0, produto.quantidade - 1);
   });
   localStorage.setItem("produtos", JSON.stringify(produtos));
 
