@@ -11,7 +11,6 @@ const quartosPanelContainer = document.createElement('div');
 quartosPanelContainer.id = 'quartosPanel';
 quartosPanelContainer.className = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6';
 
-// Insere painel antes da tabela (se houver)
 if (quartosTableBody) {
   const tabelaContainer = quartosTableBody.closest('div');
   if (tabelaContainer && tabelaContainer.parentNode) {
@@ -27,18 +26,65 @@ const statusCores = {
 };
 
 // ==================== //
+// FUNÇÃO DE BACKUP      //
+// ==================== //
+function criarBackup() {
+  const quartos = localStorage.getItem('quartos') || '[]';
+  const entradas = localStorage.getItem('entradasQuartos') || '{}';
+
+  const data = {
+    quartos: JSON.parse(quartos),
+    entradasQuartos: JSON.parse(entradas),
+    backupDate: new Date().toLocaleString()
+  };
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `backup_motel_${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ==================== //
+// FUNÇÃO RESTAURAR BACKUP
+// ==================== //
+function restaurarBackup(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.quartos && data.entradasQuartos) {
+        localStorage.setItem('quartos', JSON.stringify(data.quartos));
+        localStorage.setItem('entradasQuartos', JSON.stringify(data.entradasQuartos));
+        alert('✅ Backup restaurado com sucesso!');
+        listarQuartos();
+      } else {
+        alert('⚠️ Arquivo inválido.');
+      }
+    } catch(err) {
+      alert('⚠️ Erro ao restaurar backup.');
+      console.error(err);
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ==================== //
 //   FUNÇÃO LISTAR      //
 // ==================== //
 function listarQuartos() {
   let quartos = JSON.parse(localStorage.getItem('quartos')) || [];
   let entradas = JSON.parse(localStorage.getItem('entradasQuartos')) || {};
 
-  // Limpa tabela e painel
   if (quartosTableBody) quartosTableBody.innerHTML = '';
   quartosPanelContainer.innerHTML = '';
 
   quartos.forEach((quarto, index) => {
-    // === TABELA ===
+    // Tabela
     if (quartosTableBody) {
       const tr = document.createElement('tr');
       tr.innerHTML = `
@@ -60,7 +106,7 @@ function listarQuartos() {
       quartosTableBody.appendChild(tr);
     }
 
-    // === CARDS ===
+    // Cards
     const card = document.createElement('div');
     const cor = statusCores[quarto.status] || 'bg-gray-400';
     card.className = `p-4 rounded-xl shadow text-white cursor-pointer transition-transform hover:scale-105 ${cor}`;
@@ -71,7 +117,6 @@ function listarQuartos() {
       <p>Entrada: ${entradas[index] || "--:--"}</p>
     `;
 
-    // === Clique para mudar status ===
     card.addEventListener('click', () => {
       if (quarto.status === 'livre') {
         quarto.status = 'ocupado';
@@ -91,6 +136,14 @@ function listarQuartos() {
 
     quartosPanelContainer.appendChild(card);
   });
+
+  // Executa backup automático diário
+  const ultimaDataBackup = localStorage.getItem('ultimaDataBackup');
+  const hoje = new Date().toLocaleDateString();
+  if (ultimaDataBackup !== hoje) {
+    criarBackup();
+    localStorage.setItem('ultimaDataBackup', hoje);
+  }
 }
 
 // ==================== //
@@ -168,7 +221,7 @@ function editarQuarto(index) {
     quartoForm.reset();
     listarQuartos();
 
-    quartoForm.onsubmit = null; // volta comportamento padrão
+    quartoForm.onsubmit = null;
   };
 }
 
@@ -188,7 +241,6 @@ window.addEventListener("load", () => {
 
   if (userBox) userBox.textContent = `👤 Usuário: ${usuario.nome}`;
   
-  // Determinar turno atual
   const hora = new Date().getHours();
   let turno = "";
   if (hora >= 6 && hora < 14) turno = "🌅 Manhã";
