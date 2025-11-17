@@ -7,11 +7,13 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
+
 <body class="flex bg-gray-100 min-h-screen">
 
 <!-- Sidebar -->
 <aside class="w-64 bg-white shadow-md p-4 flex flex-col gap-4">
   <h1 class="text-2xl font-bold text-red-600 text-center">Motel Maçã do Amor</h1>
+
   <nav class="flex flex-col gap-3">
     <a href="quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-bed"></i> Quartos</a>
     <a href="controle_quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-sliders"></i> Controle de Quartos</a>
@@ -22,107 +24,127 @@
     <a href="estoque.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-warehouse"></i> Estoque</a>
     <a href="usuarios.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-users"></i> Usuários</a>
   </nav>
+
   <div class="mt-auto">
-    <a href="login.html" class="flex items-center gap-2 p-2 text-red-600 hover:bg-gray-200 rounded"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
+    <a href="login.html" class="flex items-center gap-2 p-2 text-red-600 hover:bg-gray-200 rounded">
+      <i class="fa-solid fa-right-from-bracket"></i> Sair
+    </a>
   </div>
 </aside>
 
 <!-- Main Content -->
 <main class="flex-1 p-6">
-  <h2 class="text-3xl font-semibold mb-6">Relatório de Gestão </h2>
+  <h2 class="text-3xl font-semibold mb-6">Relatório de Gestão</h2>
 
-  <!-- Faturamento do dia -->
-  <div class="mb-6 text-xl font-semibold">💰 Faturamento :  <span id="faturamentoRelatorio">R$ 0.00</span></div>
-
-  <!-- Filtro por Data -->
-  <div class="bg-white p-4 rounded-xl shadow mb-6 flex gap-4">
-    <input type="date" id="filtroData" class="border rounded-xl p-2">
-    <button onclick="filtrarPorData()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl">
-      Filtrar
-    </button>
-    <button onclick="limparFiltro()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-xl">
-      Limpar
-    </button>
+  <!-- Faturamento -->
+  <div class="mb-6 text-xl font-semibold">
+    💰 Faturamento: <span id="faturamentoRelatorio">R$ 0,00</span>
   </div>
 
-  <!-- Tabela de Relatório -->
+  <!-- Filtro -->
+  <div class="bg-white p-4 rounded-xl shadow mb-6 flex gap-4">
+    <input type="date" id="filtroData" class="border rounded-xl p-2">
+    <button onclick="filtrarPorData()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl">Filtrar</button>
+    <button onclick="limparFiltro()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-xl">Limpar</button>
+  </div>
+
+  <!-- Tabela -->
   <div class="bg-white p-6 rounded-xl shadow overflow-x-auto">
     <table class="w-full table-auto border-collapse border border-gray-300">
       <thead>
         <tr class="bg-gray-200">
           <th class="border px-2 py-2">Quarto</th>
-          <th class="border px-2 py-2">Data</th>
-          <th class="border px-2 py-2">Entrada</th>
-          <th class="border px-2 py-2">Saída</th>
+          <th class="border px-2 py-2">Data Entrada</th>
+          <th class="border px-2 py-2">Hora Entrada</th>
+          <th class="border px-2 py-2">Data Saída</th>
+          <th class="border px-2 py-2">Hora Saída</th>
           <th class="border px-2 py-2">Consumos</th>
           <th class="border px-2 py-2">Valor Quarto</th>
-          <th class="border px-2 py-2">Forma de Pagamento</th>
+          <th class="border px-2 py-2">Forma Pagamento</th>
+          <th class="border px-2 py-2">Períodos</th>
           <th class="border px-2 py-2">Total</th>
           <th class="border px-2 py-2">Ações</th>
         </tr>
       </thead>
-      <tbody id="relatorioTableBody">
-        <!-- Linhas adicionadas pelo JS -->
-      </tbody>
+      <tbody id="relatorioTableBody"></tbody>
     </table>
   </div>
 </main>
 
 <!-- Modal de Edição -->
-<div id="editarModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-  <div class="bg-white rounded-xl shadow-lg w-full max-w-lg p-6 relative">
-    <h2 class="text-2xl font-bold mb-4">Editar Registro</h2>
-    <form id="editarForm" class="flex flex-col gap-4">
+<div id="editarModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 overflow-auto p-4">
+  <div class="bg-white rounded-xl shadow-lg w-full max-w-lg p-6 relative flex flex-col gap-4">
+    <h2 class="text-2xl font-bold mb-4 text-center">Editar Registro</h2>
+
+    <form id="editarForm" class="flex flex-col gap-4 overflow-y-auto max-h-[80vh]">
+
       <div>
         <label class="block font-semibold mb-1">Quarto</label>
-        <input type="text" id="editarQuarto" class="w-full border rounded-xl p-2" required>
+        <input type="text" id="editarQuarto" class="w-full border rounded-xl p-2" disabled>
       </div>
+
       <div>
-        <label class="block font-semibold mb-1">Data</label>
-        <input type="date" id="editarData" class="w-full border rounded-xl p-2" required>
+        <label class="block font-semibold mb-1">Data Entrada</label>
+        <input type="date" id="editarData" class="w-full border rounded-xl p-2" disabled>
       </div>
+
       <div>
-        <label class="block font-semibold mb-1">Hora de Entrada</label>
-        <input type="time" id="editarHoraEntrada" class="w-full border rounded-xl p-2">
+        <label class="block font-semibold mb-1">Hora Entrada</label>
+        <input type="time" id="editarHoraEntrada" class="w-full border rounded-xl p-2" disabled>
       </div>
+
       <div>
-        <label class="block font-semibold mb-1">Hora de Saída</label>
-        <input type="time" id="editarHoraSaida" class="w-full border rounded-xl p-2">
+        <label class="block font-semibold mb-1">Data Saída</label>
+        <input type="date" id="editarDataSaida" class="w-full border rounded-xl p-2" disabled>
       </div>
+
       <div>
-        <label class="block font-semibold mb-1">Valor do Quarto</label>
-        <input type="number" step="0.01" id="editarValorQuarto" class="w-full border rounded-xl p-2">
+        <label class="block font-semibold mb-1">Hora Saída</label>
+        <input type="time" id="editarHoraSaida" class="w-full border rounded-xl p-2" disabled>
       </div>
+
       <div>
-        <label class="block font-semibold mb-1">Forma de Pagamento</label>
+        <label class="block font-semibold mb-1">Valor Quarto</label>
+        <input type="number" id="editarValorQuarto" class="w-full border rounded-xl p-2" disabled>
+      </div>
+
+      <div>
+        <label class="block font-semibold mb-1">Forma Pagamento</label>
         <input type="text" id="editarPagamentos" class="w-full border rounded-xl p-2">
       </div>
+
+      <div>
+        <label class="block font-semibold mb-1">Períodos</label>
+        <input type="text" id="editarPeriodos" class="w-full border rounded-xl p-2" disabled>
+      </div>
+
       <div>
         <label class="block font-semibold mb-1">Total</label>
-        <input type="number" step="0.01" id="editarTotal" class="w-full border rounded-xl p-2">
+        <input type="number" id="editarTotal" class="w-full border rounded-xl p-2">
       </div>
+
       <div class="flex justify-end gap-2 mt-4">
-        <button type="button" onclick="fecharModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-xl">
-          Cancelar
-        </button>
-        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl">
-          Salvar
-        </button>
+        <button type="button" onclick="fecharModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-xl">Cancelar</button>
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl">Salvar</button>
       </div>
+
     </form>
   </div>
 </div>
 
-<!-- Modal de Senha do Gerente -->
+<!-- Modal Senha Gerente -->
 <div id="modalSenhaGerente" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
   <div class="bg-gray-800 text-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
-    <h2 class="text-2xl font-bold mb-4 text-center">Acesso Restrito</h2>
-    <p class="mb-4 text-center">Digite a senha do gerente para continuar:</p>
-    <input type="password" id="inputSenhaModal" class="w-full p-3 rounded-xl text-black mb-4" placeholder="Senha do gerente">
+    <h2 class="text-2xl font-bold text-center mb-4">Acesso Restrito</h2>
+    <p class="text-center mb-4">Digite a senha do gerente:</p>
+
+    <input type="password" id="inputSenhaModal" class="w-full p-3 rounded-xl text-black mb-4" placeholder="Senha">
+
     <div class="flex justify-end gap-2">
-      <button onclick="fecharModalSenha()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-xl">Cancelar</button>
-      <button onclick="verificarSenhaGerente()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl">Confirmar</button>
+      <button onclick="fecharModalSenha()" class="bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded-xl">Cancelar</button>
+      <button onclick="verificarSenhaGerente()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-xl">Confirmar</button>
     </div>
+
     <p id="erroSenha" class="text-red-500 mt-2 text-center hidden">Senha incorreta!</p>
   </div>
 </div>
