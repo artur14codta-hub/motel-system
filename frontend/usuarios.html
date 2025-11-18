@@ -21,6 +21,7 @@
 <main class="flex-1 p-6">
   <h2 class="text-3xl font-semibold mb-6">Cadastro de Funcionários</h2>
 
+  <!-- Formulário de cadastro -->
   <div class="bg-white p-6 rounded-xl shadow max-w-lg mb-6">
     <form id="cadastroForm">
       <div class="mb-4">
@@ -51,7 +52,6 @@
         <label class="block text-gray-700 mb-1">Senha</label>
         <input type="password" id="senhaFunc" class="w-full p-3 border rounded-xl" placeholder="********">
       </div>
-
       <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white p-3 rounded-xl font-bold">Cadastrar</button>
     </form>
   </div>
@@ -63,11 +63,12 @@
       <thead>
         <tr class="bg-gray-200">
           <th class="border px-4 py-2">Nome</th>
+          <th class="border px-4 py-2">Nascimento</th>
           <th class="border px-4 py-2">CPF</th>
           <th class="border px-4 py-2">Telefone</th>
           <th class="border px-4 py-2">Cargo</th>
           <th class="border px-4 py-2">E-mail</th>
-          <th class="border px-4 py-2">Senha</th> <!-- 🔹 NOVA COLUNA -->
+          <th class="border px-4 py-2">Senha</th>
           <th class="border px-4 py-2">Editar</th>
           <th class="border px-4 py-2">Remover</th>
         </tr>
@@ -77,7 +78,6 @@
       </tbody>
     </table>
   </div>
-
 </main>
 
 <!-- Modal de Senha do Gerente -->
