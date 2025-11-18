@@ -25,8 +25,9 @@ modalSenhaGerente.innerHTML = `
 </div>`;
 document.body.appendChild(modalSenhaGerente);
 
+// Variáveis do modal
 let registroAtualIndex = null;
-let acaoPendente = null; // "apagarTurno"
+let acaoPendente = null;
 let inputSenhaModal = document.getElementById("inputSenhaModal");
 let erroSenha = document.getElementById("erroSenha");
 
@@ -41,15 +42,11 @@ window.addEventListener("load", () => {
     return;
   }
 
-  // Exibe usuário
   userBox.textContent = `👤 Bem-vindo, ${usuario.nome}!`;
 
-  // =============================
-  // Turno do usuário logado
-  // =============================
   let turnos = JSON.parse(localStorage.getItem("turnos")) || [];
-
   let turnoAtivo = turnos.find(t => t.email === usuario.email && t.ativo);
+
   if (!turnoAtivo) {
     const inicioTurno = new Date().toISOString();
     turnoAtivo = {
@@ -63,13 +60,9 @@ window.addEventListener("load", () => {
     localStorage.setItem("turnos", JSON.stringify(turnos));
   }
 
-  // Atualiza tabela e faturamento
   atualizarTabela();
   atualizarFaturamento();
 
-  // =============================
-  // Botão sair
-  // =============================
   const btnSair = document.getElementById("btnSair");
   if (btnSair) {
     btnSair.addEventListener("click", () => {
@@ -84,8 +77,8 @@ window.addEventListener("load", () => {
 function encerrarTurno(emailUsuario = null) {
   let usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
   if (!usuario && !emailUsuario) return;
-  const email = emailUsuario || usuario.email;
 
+  const email = emailUsuario || usuario.email;
   let turnos = JSON.parse(localStorage.getItem("turnos")) || [];
   const turnoAtivo = turnos.find(t => t.email === email && t.ativo);
 
@@ -99,19 +92,31 @@ function encerrarTurno(emailUsuario = null) {
   atualizarTabela();
 }
 
-// Encerrar turno + logout
 function encerrarTurnoELogout() {
   encerrarTurno();
   localStorage.removeItem("usuarioLogado");
   window.location.href = "login.html";
 }
 
+// ============================================
+// ATUALIZA TABELA DO DASHBOARD
+// ============================================
 function atualizarTabela() {
-  tabela.innerHTML = '';
+  tabela.innerHTML = "";
   const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
 
   turnos.forEach((turno, i) => {
-    let permanencia = '';
+
+    // DATA E HORA DE INÍCIO
+    const dataInicio = new Date(turno.inicio).toLocaleDateString("pt-BR");
+    const horaInicio = new Date(turno.inicio).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+    // DATA E HORA DE FIM
+    const dataFim = turno.fim ? new Date(turno.fim).toLocaleDateString("pt-BR") : "--/--/----";
+    const horaFim = turno.fim ? new Date(turno.fim).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "--:--";
+
+    // PERMANÊNCIA
+    let permanencia = "";
     if (turno.ativo) {
       const diffMs = new Date() - new Date(turno.inicio);
       const segundos = Math.floor((diffMs / 1000) % 60);
@@ -128,21 +133,30 @@ function atualizarTabela() {
 
     const situacao = turno.ativo
       ? `<span class="inline-block w-3 h-3 rounded-full bg-green-500 mr-1"></span> Ativo`
-      : `<span class="inline-block w-3 h-3 rounded-full bg-gray-400 mr-1"></span> Encerrado`;
+      : `<span class="inline-block w-3 h-3 rounded-full bg-red-600 mr-1"></span> Encerrado`;
 
-    const tr = document.createElement('tr');
+    const tr = document.createElement("tr");
     tr.innerHTML = `
       <td class="px-4 py-2 border">${turno.nome}</td>
-      <td class="px-4 py-2 border">${new Date(turno.inicio).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</td>
+      <td class="px-4 py-2 border">${dataInicio}</td>
+      <td class="px-4 py-2 border">${horaInicio}</td>
       <td class="px-4 py-2 border">${situacao}</td>
-      <td class="px-4 py-2 border">${turno.fim ? new Date(turno.fim).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--'}</td>
+      <td class="px-4 py-2 border">${dataFim}</td>
+      <td class="px-4 py-2 border">${horaFim}</td>
       <td class="px-4 py-2 border">${permanencia}</td>
       <td class="px-4 py-2 border">
-        ${turno.ativo ? `<button onclick="encerrarTurnoELogout()" class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded">Encerrar</button>` : ''}
-        <button onclick="pedirSenhaGerente('apagarTurno', ${i})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded">Apagar</button>
+        ${turno.ativo ? `<button onclick="encerrarTurnoELogout()" class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded">Encerrar</button>` : ""}
+        <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded btn-apagar" data-index="${i}">Apagar</button>
       </td>
     `;
     tabela.appendChild(tr);
+  });
+
+  document.querySelectorAll(".btn-apagar").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const index = parseInt(btn.getAttribute("data-index"));
+      pedirSenhaGerente("apagarTurno", index);
+    });
   });
 
   if (turnos.some(t => t.ativo)) {
@@ -153,7 +167,7 @@ function atualizarTabela() {
 // ============================================
 // MODAL DO GERENTE
 // ============================================
-function pedirSenhaGerente(acao, index){
+function pedirSenhaGerente(acao, index) {
   acaoPendente = acao;
   registroAtualIndex = index;
   modalSenhaGerente.classList.remove("hidden");
@@ -161,16 +175,16 @@ function pedirSenhaGerente(acao, index){
   erroSenha.classList.add("hidden");
 }
 
-function verificarSenhaGerente(){
-  if(inputSenhaModal.value === GERENTE_SENHA){
+function verificarSenhaGerente() {
+  if (inputSenhaModal.value === GERENTE_SENHA) {
     modalSenhaGerente.classList.add("hidden");
-    if(acaoPendente==="apagarTurno") apagarTurnoConfirmado(registroAtualIndex);
+    if (acaoPendente === "apagarTurno") apagarTurnoConfirmado(registroAtualIndex);
   } else {
     erroSenha.classList.remove("hidden");
   }
 }
 
-function fecharModalSenha(){
+function fecharModalSenha() {
   modalSenhaGerente.classList.add("hidden");
   erroSenha.classList.add("hidden");
 }
@@ -178,17 +192,17 @@ function fecharModalSenha(){
 // ============================================
 // APAGAR TURNO
 // ============================================
-function apagarTurnoConfirmado(index){
+function apagarTurnoConfirmado(index) {
   let turnos = JSON.parse(localStorage.getItem("turnos")) || [];
-  if(!confirm("Deseja realmente apagar este turno?")) return;
-  turnos.splice(index,1);
+  if (!confirm("Deseja realmente apagar este turno?")) return;
+  turnos.splice(index, 1);
   localStorage.setItem("turnos", JSON.stringify(turnos));
   atualizarTabela();
   alert("Turno removido com sucesso!");
 }
 
 // ============================================
-// FATURAMENTO (SINCRONIZADO COM RELATORIO)
+// FATURAMENTO
 // ============================================
 function atualizarFaturamento(dataFiltro = null) {
   const registros = JSON.parse(localStorage.getItem("relatorio")) || [];
@@ -205,3 +219,21 @@ function atualizarFaturamento(dataFiltro = null) {
   const faturamentoDia = registrosFiltrados.reduce((acc, r) => acc + parseFloat(r.total || 0), 0);
   faturamentoDiaEl.textContent = `R$ ${faturamentoDia.toFixed(2)}`;
 }
+
+
+
+
+// ============================================
+// FILTRAR FATURAMENTO
+// ============================================
+const btnFiltrar = document.getElementById("btnFiltrar");
+const filtroData = document.getElementById("filtroData");
+
+btnFiltrar.addEventListener("click", () => {
+  const dataSelecionada = filtroData.value; // formato yyyy-mm-dd
+  if (!dataSelecionada) {
+    alert("Selecione uma data para filtrar!");
+    return;
+  }
+  atualizarFaturamento(dataSelecionada);
+});
