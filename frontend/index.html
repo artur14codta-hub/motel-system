@@ -3,103 +3,118 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Motel Maçã do Amor - Dashboard</title>
+<title>Dashboard - Motel Maçã do Amor</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-<body class="flex bg-gray-100 min-h-screen">
 
-<!-- Sidebar -->
-<aside class="w-64 bg-white shadow-md p-4 flex flex-col gap-4 min-h-screen">
-  <h1 class="text-2xl font-bold text-red-600 text-center">Motel Maçã do Amor</h1>
-  <nav class="flex flex-col gap-3">
-    <a href="index.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded">
-      <i class="fa-solid fa-gauge-high"></i> Dashboard
-    </a>
-    <a href="quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-bed "></i> Quartos</a>
-    <a href="controle_quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-sliders"></i> Controle de Quartos</a>
-    <a href="consumo.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-wine-bottle"></i> Consumo</a>
-    <a href="pagamento.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-credit-card"></i> Pagamento</a>
-    <a href="relatorio.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-chart-line"></i> Relatórios</a>
-    <a href="produto.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-box"></i> Produtos</a>
-    <a href="estoque.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-warehouse"></i> Estoque</a>
-    <a href="usuarios.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-users"></i> Usuários</a>
-    <a href="dashboard.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
-    <a href="diaria.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded"><i class="fa-solid fa-file-alt"></i> Diária</a>
-  <div class="mt-auto">
-    <a href="login.html" class="flex items-center gap-2 p-2 text-red-600 hover:bg-gray-200 rounded"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
+<body class="bg-gray-100 min-h-screen flex">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white shadow-md p-4 flex flex-col gap-4">
+    <h1 class="text-2xl font-bold text-red-600 text-center">Motel Maçã do Amor</h1>
+
+    <nav class="flex flex-col gap-3">
+      <a href="index.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded">
+        <i class="fa-solid fa-gauge-high"></i> Dashboard
+      </a>
+      <a href="quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded">
+        <i class="fa-solid fa-bed"></i> Quartos
+      </a>
+      <a href="controle_quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded">
+        <i class="fa-solid fa-sliders"></i> Controle de Quartos
+      </a>
+      <a href="consumo.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded">
+        <i class="fa-solid fa-wine-bottle"></i> Consumo
+      </a>
+      <a href="pagamento.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded">
+        <i class="fa-solid fa-credit-card"></i> Pagamento
+      </a>
+      <a href="relatorio.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded">
+        <i class="fa-solid fa-chart-line"></i> Relatórios
+      </a>
+      <a href="produto.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded">
+        <i class="fa-solid fa-box"></i> Produtos
+      </a>
+      <a href="estoque.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded">
+        <i class="fa-solid fa-warehouse"></i> Estoque
+      </a>
+      <a href="usuarios.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded">
+        <i class="fa-solid fa-users"></i> Usuários
+      </a>
+      <a href="diaria.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded">
+        <i class="fa-solid fa-file-alt"></i> Diária
+      </a>
+    </nav>
+
+    <div class="mt-auto">
+      <button id="btnSair" class="flex items-center gap-2 p-2 text-red-600 hover:bg-gray-200 rounded w-full">
+        <i class="fa-solid fa-right-from-bracket"></i> Sair
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 p-6 overflow-auto">
+
+    <div class="flex justify-between items-center mb-6">
+      <div id="usuarioAtivo" class="text-gray-800 font-semibold text-lg"></div>
+
+      <div class="flex items-center gap-2">
+        <input type="date" id="filtroData" class="border px-3 py-2 rounded">
+        <button id="btnFiltrar" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Filtrar</button>
+      </div>
+    </div>
+
+    <!-- Faturamento -->
+    <div class="bg-white p-6 rounded-xl shadow mb-6">
+      <h2 class="text-2xl font-bold mb-4">Faturamento do Dia</h2>
+      <p id="faturamentoDia" class="text-xl font-semibold">R$ 0,00</p>
+    </div>
+
+    <!-- Turnos -->
+    <div class="bg-white p-6 rounded-xl shadow">
+      <h2 class="text-2xl font-bold mb-4">Turnos de Funcionários</h2>
+
+      <table class="min-w-full text-left border">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="px-4 py-2 border">Funcionário</th>
+            <th class="px-4 py-2 border">Data Início</th>
+            <th class="px-4 py-2 border">Hora Início</th>
+            <th class="px-4 py-2 border">Situação</th>
+            <th class="px-4 py-2 border">Data Fim</th>
+            <th class="px-4 py-2 border">Hora Fim</th>
+            <th class="px-4 py-2 border">Permanência</th>
+            <th class="px-4 py-2 border">Ações</th>
+          </tr>
+        </thead>
+
+        <tbody id="tabelaTurnos"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Modal Senha Gerente -->
+  <div id="modalSenhaGerente"
+       class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-gray-800 text-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
+      <h2 class="text-2xl font-bold mb-4 text-center">Acesso Restrito</h2>
+      <p class="mb-4 text-center">Digite a senha do gerente:</p>
+
+      <input type="password" id="inputSenhaModal"
+             class="w-full p-3 rounded-xl text-black mb-4"
+             placeholder="Senha do gerente">
+
+      <div class="flex justify-end gap-2">
+        <button class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-xl">Cancelar</button>
+        <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl">Confirmar</button>
+      </div>
+
+      <p id="erroSenha" class="text-red-500 mt-2 text-center hidden">Senha incorreta!</p>
+    </div>
   </div>
-</aside>
 
-<!-- Main Content -->
-<main class="flex-1 p-6">
-  <h2 class="text-3xl font-semibold mb-6">Dashboard</h2>
-  <div id="dataAtual" class="text-gray-600 mb-4"></div>
-
-  <!-- Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-    <div class="bg-white p-6 rounded-xl shadow flex flex-col items-center">
-      <h3 class="text-lg font-medium mb-2">Quartos Ocupados</h3>
-      <p id="qtdOcupados" class="text-2xl font-bold text-red-600">0</p>
-    </div>
-    <div class="bg-white p-6 rounded-xl shadow flex flex-col items-center">
-      <h3 class="text-lg font-medium mb-2">Faturamento Hoje</h3>
-      <p id="faturamentoDia" class="text-2xl font-bold text-green-600">R$ 0,00</p>
-    </div>
-    <div class="bg-white p-6 rounded-xl shadow flex flex-col items-center">
-      <h3 class="text-lg font-medium mb-2">Produtos em Estoque</h3>
-      <p id="produtosEstoque" class="text-2xl font-bold text-blue-600">0</p>
-    </div>
-  </div>
-</main>
-
-<!-- Modal senha gerente -->
-<div id="modalSenhaGerente" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-  <div class="bg-white p-6 rounded-2xl shadow-lg w-80 text-center">
-    <h2 class="text-lg font-bold text-gray-800 mb-4">Confirmação de Gerente</h2>
-    <input type="password" id="inputSenhaGerente" placeholder="Digite a senha"
-      class="border w-full px-3 py-2 rounded mb-4">
-    <div class="flex justify-center gap-4">
-      <button id="btnConfirmarSenha" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Confirmar</button>
-      <button id="btnCancelarSenha" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">Cancelar</button>
-    </div>
-  </div>
-</div>
-
-<script>
-// Atualiza a data atual
-function atualizarData() {
-  const data = new Date();
-  const opcoes = { day: '2-digit', month: 'long', year: 'numeric' };
-  document.getElementById('dataAtual').textContent = "📅 " + data.toLocaleDateString('pt-BR', opcoes);
-}
-
-// Calcula os dados do Dashboard
-function calcularDashboard() {
-  // Quartos
-  const quartos = JSON.parse(localStorage.getItem('quartos')) || [];
-  const ocupados = quartos.filter(q => q.status === 'ocupado').length;
-  document.getElementById('qtdOcupados').textContent = ocupados;
-
-  // Faturamento do dia
-  const pagamentos = JSON.parse(localStorage.getItem('pagamentos')) || [];
-  const hoje = new Date().toLocaleDateString('pt-BR');
-  let faturamentoDia = 0;
-  pagamentos.forEach(p => { if (p.data === hoje) faturamentoDia += parseFloat(p.valor); });
-  document.getElementById('faturamentoDia').textContent = `R$ ${faturamentoDia.toFixed(2)}`;
-
-  // Produtos em estoque
-  const produtos = JSON.parse(localStorage.getItem('produtos')) || [];
-  document.getElementById('produtosEstoque').textContent = produtos.length;
-}
-
-// Inicialização
-window.addEventListener('load', () => {
-  atualizarData();
-  calcularDashboard();
-  setInterval(calcularDashboard, 30000); // atualiza a cada 30s
-});
-</script>
-
+<script src="turno.js"></script>
 </body>
 </html>
