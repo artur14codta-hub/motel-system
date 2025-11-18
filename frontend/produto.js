@@ -1,4 +1,17 @@
-// Seletores
+// ============================
+// CONFIGURAÇÃO DE SENHA
+// ============================
+const GERENTE_SENHA = "1205";
+let gerenteAutorizado = false; // senha já validada
+
+// Modal de senha
+const modalSenhaGerente = document.getElementById("modalSenhaGerente");
+const inputSenhaModal = document.getElementById("inputSenhaModal");
+const erroSenha = document.getElementById("erroSenha");
+
+// ============================
+// PRODUTOS
+// ============================
 const produtoTableBody = document.getElementById("produtoTableBody");
 const produtoForm = document.getElementById("produtoForm");
 const produtoNome = document.getElementById("produtoNome");
@@ -14,8 +27,64 @@ const editarProdutoPreco = document.getElementById("editarProdutoPreco");
 
 let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
 let editarIndex = null;
+let acaoPendente = null;
 
-// Função para listar produtos
+// ============================
+// FUNÇÕES DE SENHA
+// ============================
+function pedirSenhaGerente(acao, index) {
+  if (gerenteAutorizado) {
+    // senha já foi inserida, executa ação direto
+    executarAcao(acao, index);
+    return;
+  }
+
+  acaoPendente = { acao, index };
+  modalSenhaGerente.classList.remove("hidden");
+  inputSenhaModal.value = "";
+  erroSenha.classList.add("hidden");
+  inputSenhaModal.focus();
+}
+
+function verificarSenhaGerente() {
+  if (inputSenhaModal.value === GERENTE_SENHA) {
+    gerenteAutorizado = true;
+    modalSenhaGerente.classList.add("hidden");
+    erroSenha.classList.add("hidden");
+
+    // executa a ação que estava pendente
+    if (acaoPendente) {
+      executarAcao(acaoPendente.acao, acaoPendente.index);
+      acaoPendente = null;
+    }
+  } else {
+    erroSenha.classList.remove("hidden");
+    inputSenhaModal.value = "";
+    inputSenhaModal.focus();
+  }
+}
+
+function fecharModalSenha() {
+  modalSenhaGerente.classList.add("hidden");
+  erroSenha.classList.add("hidden");
+  acaoPendente = null;
+}
+
+// Executa ação protegida
+function executarAcao(acao, index) {
+  switch (acao) {
+    case "editarProduto":
+      abrirEditarProduto(index);
+      break;
+    case "apagarProduto":
+      apagarProduto(index);
+      break;
+  }
+}
+
+// ============================
+// LISTAR PRODUTOS
+// ============================
 function carregarProdutos() {
   produtoTableBody.innerHTML = "";
   produtos.forEach((p, i) => {
@@ -25,19 +94,21 @@ function carregarProdutos() {
       <td class="border px-2 py-1">${p.quantidade}</td>
       <td class="border px-2 py-1">R$ ${parseFloat(p.preco).toFixed(2)}</td>
       <td class="border px-2 py-1 flex gap-2">
-        <button onclick="abrirEditarProduto(${i})" class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded">Editar</button>
-        <button onclick="apagarProduto(${i})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded">Apagar</button>
+        <button onclick="pedirSenhaGerente('editarProduto', ${i})" class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded">Editar</button>
+        <button onclick="pedirSenhaGerente('apagarProduto', ${i})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded">Apagar</button>
       </td>
     `;
     produtoTableBody.appendChild(tr);
   });
 
-  // Atualiza no localStorage para garantir que o estoque/consumo use os dados corretos
   localStorage.setItem("produtos", JSON.stringify(produtos));
 }
 
-// Adicionar produto
-function adicionarProduto() {
+// ============================
+// ADICIONAR PRODUTO
+// ============================
+produtoForm.addEventListener("submit", (e) => {
+  e.preventDefault();
   const nome = produtoNome.value.trim();
   const quantidade = parseInt(produtoQuantidade.value);
   const preco = parseFloat(produtoPreco.value);
@@ -55,9 +126,11 @@ function adicionarProduto() {
   produtoPreco.value = "";
 
   carregarProdutos();
-}
+});
 
-// Apagar produto
+// ============================
+// APAGAR PRODUTO
+// ============================
 function apagarProduto(index) {
   if (!confirm("Deseja realmente apagar este produto?")) return;
   produtos.splice(index, 1);
@@ -65,7 +138,9 @@ function apagarProduto(index) {
   carregarProdutos();
 }
 
-// Abrir modal de edição
+// ============================
+// EDITAR PRODUTO
+// ============================
 function abrirEditarProduto(index) {
   editarIndex = index;
   const p = produtos[index];
@@ -75,12 +150,10 @@ function abrirEditarProduto(index) {
   editarProdutoModal.classList.remove("hidden");
 }
 
-// Fechar modal
 function fecharEditarModal() {
   editarProdutoModal.classList.add("hidden");
 }
 
-// Salvar edição
 editarProdutoForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const nome = editarProdutoNome.value.trim();
@@ -98,6 +171,7 @@ editarProdutoForm.addEventListener("submit", (e) => {
   carregarProdutos();
 });
 
-
-// Inicializa
+// ============================
+// INICIALIZAÇÃO
+// ============================
 carregarProdutos();
