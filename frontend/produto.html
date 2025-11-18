@@ -13,6 +13,7 @@
 <aside class="w-64 bg-white shadow-md p-4 flex flex-col gap-4">
   <h1 class="text-2xl font-bold text-red-600 text-center">Motel Maçã do Amor</h1>
   <nav class="flex flex-col gap-3">
+    <a href="dashboard.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
     <a href="quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-bed"></i> Quartos</a>
     <a href="controle_quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-sliders"></i> Controle de Quartos</a>
     <a href="consumo.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-wine-bottle"></i> Consumo</a>
@@ -21,6 +22,8 @@
     <a href="produto.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded"><i class="fa-solid fa-box"></i> Produtos</a>
     <a href="estoque.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-warehouse"></i> Estoque</a>
     <a href="usuarios.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-users"></i> Usuários</a>
+    <a href="diaria.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded"><i class="fa-solid fa-file-alt"></i> Diária</a>
+    
   </nav>
   <div class="mt-auto">
     <a href="login.html" class="flex items-center gap-2 p-2 text-red-600 hover:bg-gray-200 rounded"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
@@ -75,113 +78,6 @@
   </div>
 </div>
 
-<script>
-// Seletores
-const produtoTableBody = document.getElementById("produtoTableBody");
-const produtoForm = document.getElementById("produtoForm");
-const produtoNome = document.getElementById("produtoNome");
-const produtoQuantidade = document.getElementById("produtoQuantidade");
-const produtoPreco = document.getElementById("produtoPreco");
-
-const editarProdutoModal = document.getElementById("editarProdutoModal");
-const editarProdutoForm = document.getElementById("editarProdutoForm");
-const editarProdutoNome = document.getElementById("editarProdutoNome");
-const editarProdutoQuantidade = document.getElementById("editarProdutoQuantidade");
-const editarProdutoPreco = document.getElementById("editarProdutoPreco");
-
-let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
-let editarIndex = null;
-
-// Função para salvar produtos
-function salvarProdutos() {
-  localStorage.setItem("produtos", JSON.stringify(produtos));
-  window.dispatchEvent(new Event("storage"));
-}
-
-// Função para carregar produtos
-function carregarProdutos() {
-  produtoTableBody.innerHTML = "";
-  produtos.forEach((p, i) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td class="border px-2 py-1">${p.nome}</td>
-      <td class="border px-2 py-1">${p.quantidade}</td>
-      <td class="border px-2 py-1">R$ ${parseFloat(p.preco).toFixed(2)}</td>
-      <td class="border px-2 py-1 flex gap-2">
-        <button onclick="abrirEditarProduto(${i})" class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded">Editar</button>
-        <button onclick="apagarProduto(${i})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded">Apagar</button>
-      </td>
-    `;
-    produtoTableBody.appendChild(tr);
-  });
-}
-
-// Adicionar produto
-produtoForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const nome = produtoNome.value.trim();
-  const quantidade = parseInt(produtoQuantidade.value);
-  const preco = parseFloat(produtoPreco.value);
-
-  if (!nome || isNaN(quantidade) || isNaN(preco)) {
-    alert("Preencha todos os campos corretamente!");
-    return;
-  }
-
-  produtos.push({ nome, quantidade, preco });
-  salvarProdutos();
-
-  produtoNome.value = "";
-  produtoQuantidade.value = "";
-  produtoPreco.value = "";
-
-  carregarProdutos();
-});
-
-// Apagar produto
-function apagarProduto(index) {
-  if (!confirm("Deseja realmente apagar este produto?")) return;
-  produtos.splice(index, 1);
-  salvarProdutos();
-  carregarProdutos();
-}
-
-// Abrir modal
-function abrirEditarProduto(index) {
-  editarIndex = index;
-  const p = produtos[index];
-  editarProdutoNome.value = p.nome;
-  editarProdutoQuantidade.value = p.quantidade;
-  editarProdutoPreco.value = p.preco;
-  editarProdutoModal.classList.remove("hidden");
-}
-
-// Fechar modal
-function fecharEditarModal() {
-  editarProdutoModal.classList.add("hidden");
-}
-
-// Salvar edição
-editarProdutoForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const nome = editarProdutoNome.value.trim();
-  const quantidade = parseInt(editarProdutoQuantidade.value);
-  const preco = parseFloat(editarProdutoPreco.value);
-
-  if (!nome || isNaN(quantidade) || isNaN(preco)) {
-    alert("Preencha todos os campos corretamente!");
-    return;
-  }
-
-  produtos[editarIndex] = { nome, quantidade, preco };
-  salvarProdutos();
-  fecharEditarModal();
-  carregarProdutos();
-});
-
-// Inicializa
-carregarProdutos();
-</script>
 <!-- Modal de Senha do Gerente -->
 <div id="modalSenhaGerente" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
   <div class="bg-gray-800 text-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
@@ -195,6 +91,178 @@ carregarProdutos();
     <p id="erroSenha" class="text-red-500 mt-2 text-center hidden">Senha incorreta!</p>
   </div>
 </div>
+
+<script>
+// ============================
+// CONFIGURAÇÃO DE SENHA
+// ============================
+const GERENTE_SENHA = "1205";
+let gerenteAutorizado = false; // senha já validada
+let acaoPendente = null;
+
+// Seletores do modal
+const modalSenhaGerente = document.getElementById("modalSenhaGerente");
+const inputSenhaModal = document.getElementById("inputSenhaModal");
+const erroSenha = document.getElementById("erroSenha");
+
+// ============================
+// PRODUTOS
+// ============================
+const produtoTableBody = document.getElementById("produtoTableBody");
+const produtoForm = document.getElementById("produtoForm");
+const produtoNome = document.getElementById("produtoNome");
+const produtoQuantidade = document.getElementById("produtoQuantidade");
+const produtoPreco = document.getElementById("produtoPreco");
+
+// Modal de edição
+const editarProdutoModal = document.getElementById("editarProdutoModal");
+const editarProdutoForm = document.getElementById("editarProdutoForm");
+const editarProdutoNome = document.getElementById("editarProdutoNome");
+const editarProdutoQuantidade = document.getElementById("editarProdutoQuantidade");
+const editarProdutoPreco = document.getElementById("editarProdutoPreco");
+
+let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
+let editarIndex = null;
+
+// ============================
+// FUNÇÕES DE SENHA
+// ============================
+function pedirSenhaGerente(acao, index) {
+  if (gerenteAutorizado) {
+    executarAcao(acao, index);
+    return;
+  }
+  acaoPendente = { acao, index };
+  modalSenhaGerente.classList.remove("hidden");
+  inputSenhaModal.value = "";
+  erroSenha.classList.add("hidden");
+  inputSenhaModal.focus();
+}
+
+function verificarSenhaGerente() {
+  if (inputSenhaModal.value === GERENTE_SENHA) {
+    gerenteAutorizado = true;
+    modalSenhaGerente.classList.add("hidden");
+    erroSenha.classList.add("hidden");
+    if (acaoPendente) {
+      executarAcao(acaoPendente.acao, acaoPendente.index);
+      acaoPendente = null;
+    }
+  } else {
+    erroSenha.classList.remove("hidden");
+    inputSenhaModal.value = "";
+    inputSenhaModal.focus();
+  }
+}
+
+function fecharModalSenha() {
+  modalSenhaGerente.classList.add("hidden");
+  erroSenha.classList.add("hidden");
+  acaoPendente = null;
+}
+
+function executarAcao(acao, index) {
+  switch (acao) {
+    case "editarProduto":
+      abrirEditarProduto(index);
+      break;
+    case "apagarProduto":
+      apagarProduto(index);
+      break;
+  }
+}
+
+// ============================
+// LISTAR PRODUTOS
+// ============================
+function carregarProdutos() {
+  produtoTableBody.innerHTML = "";
+  produtos.forEach((p, i) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="border px-2 py-1">${p.nome}</td>
+      <td class="border px-2 py-1">${p.quantidade}</td>
+      <td class="border px-2 py-1">R$ ${parseFloat(p.preco).toFixed(2)}</td>
+      <td class="border px-2 py-1 flex gap-2">
+        <button onclick="pedirSenhaGerente('editarProduto', ${i})" class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded">Editar</button>
+        <button onclick="pedirSenhaGerente('apagarProduto', ${i})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded">Apagar</button>
+      </td>
+    `;
+    produtoTableBody.appendChild(tr);
+  });
+  localStorage.setItem("produtos", JSON.stringify(produtos));
+}
+
+// ============================
+// ADICIONAR PRODUTO
+// ============================
+produtoForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const nome = produtoNome.value.trim();
+  const quantidade = parseInt(produtoQuantidade.value);
+  const preco = parseFloat(produtoPreco.value);
+
+  if (!nome || isNaN(quantidade) || isNaN(preco)) {
+    alert("Preencha todos os campos corretamente!");
+    return;
+  }
+
+  produtos.push({ nome, quantidade, preco });
+  localStorage.setItem("produtos", JSON.stringify(produtos));
+
+  produtoNome.value = "";
+  produtoQuantidade.value = "";
+  produtoPreco.value = "";
+
+  carregarProdutos();
+});
+
+// ============================
+// APAGAR PRODUTO
+// ============================
+function apagarProduto(index) {
+  if (!confirm("Deseja realmente apagar este produto?")) return;
+  produtos.splice(index, 1);
+  localStorage.setItem("produtos", JSON.stringify(produtos));
+  carregarProdutos();
+}
+
+// ============================
+// EDITAR PRODUTO
+// ============================
+function abrirEditarProduto(index) {
+  editarIndex = index;
+  const p = produtos[index];
+  editarProdutoNome.value = p.nome;
+  editarProdutoQuantidade.value = p.quantidade;
+  editarProdutoPreco.value = p.preco;
+  editarProdutoModal.classList.remove("hidden");
+}
+
+function fecharEditarModal() {
+  editarProdutoModal.classList.add("hidden");
+}
+
+editarProdutoForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const nome = editarProdutoNome.value.trim();
+  const quantidade = parseInt(editarProdutoQuantidade.value);
+  const preco = parseFloat(editarProdutoPreco.value);
+
+  if (!nome || isNaN(quantidade) || isNaN(preco)) {
+    alert("Preencha todos os campos corretamente!");
+    return;
+  }
+
+  produtos[editarIndex] = { nome, quantidade, preco };
+  localStorage.setItem("produtos", JSON.stringify(produtos));
+  fecharEditarModal();
+  carregarProdutos();
+});
+
+// Inicializa
+carregarProdutos();
+</script>
 
 </body>
 </html>
