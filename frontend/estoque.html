@@ -13,6 +13,7 @@
 <aside class="w-64 bg-white shadow-md p-4 flex flex-col gap-4">
   <h1 class="text-2xl font-bold text-red-600 text-center">Motel Maçã do Amor</h1>
   <nav class="flex flex-col gap-3">
+    <a href="dashboard.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
     <a href="quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-bed"></i> Quartos</a>
     <a href="controle_quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-sliders"></i> Controle de Quartos</a>
     <a href="consumo.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-wine-bottle"></i> Consumo</a>
@@ -21,6 +22,8 @@
     <a href="produto.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-box"></i> Produtos</a>
     <a href="estoque.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded"><i class="fa-solid fa-warehouse"></i> Estoque</a>
     <a href="usuarios.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-users"></i> Usuários</a>
+    <a href="diaria.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded"><i class="fa-solid fa-file-alt"></i> Diária</a>
+    
   </nav>
   <div class="mt-auto">
     <a href="login.html" class="flex items-center gap-2 p-2 text-red-600 hover:bg-gray-200 rounded"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
@@ -77,122 +80,130 @@
 </div>
 
 <script>
-  let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
-  const estoqueTableBody = document.getElementById("estoqueTableBody");
-  const filtroInput = document.getElementById("filtroInput");
-  const totalItensEl = document.getElementById("totalItens");
-  const valorTotalEl = document.getElementById("valorTotal");
+let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
+const estoqueTableBody = document.getElementById("estoqueTableBody");
+const filtroInput = document.getElementById("filtroInput");
+const totalItensEl = document.getElementById("totalItens");
+const valorTotalEl = document.getElementById("valorTotal");
 
-  const GERENTE_SENHA = "1205";
-  let acaoPendente = null;
-  let gerenteAutenticado = false; // 🔒 controla se a senha já foi verificada
+const GERENTE_SENHA = "1205";
+let acaoPendente = null;
+let gerenteAutenticado = false;
 
-  function abrirModalSenha(acao) {
-    if (gerenteAutenticado) {
-      acao(); // se já autenticado, executa direto
-      return;
-    }
-    acaoPendente = acao;
-    document.getElementById("modalSenhaGerente").classList.remove("hidden");
+// Funções do Modal
+function abrirModalSenha(acao) {
+  if (gerenteAutenticado) {
+    acao();
+    return;
+  }
+  acaoPendente = acao;
+  document.getElementById("modalSenhaGerente").classList.remove("hidden");
+  document.getElementById("inputSenhaModal").value = "";
+  document.getElementById("erroSenha").classList.add("hidden");
+}
+
+function fecharModalSenha() {
+  document.getElementById("modalSenhaGerente").classList.add("hidden");
+  acaoPendente = null;
+}
+
+function verificarSenhaGerente() {
+  const senhaDigitada = document.getElementById("inputSenhaModal").value;
+  const erro = document.getElementById("erroSenha");
+
+  if (senhaDigitada === GERENTE_SENHA) {
+    gerenteAutenticado = true;
+    fecharModalSenha();
+    if (acaoPendente) acaoPendente();
+  } else {
+    erro.classList.remove("hidden");
     document.getElementById("inputSenhaModal").value = "";
-    document.getElementById("erroSenha").classList.add("hidden");
+    document.getElementById("inputSenhaModal").focus();
   }
+}
 
-  function fecharModalSenha() {
-    document.getElementById("modalSenhaGerente").classList.add("hidden");
-    acaoPendente = null;
-  }
+// Carrega o estoque
+function carregarEstoque(filtro = "") {
+  estoqueTableBody.innerHTML = "";
 
-  function verificarSenhaGerente() {
-    const senhaDigitada = document.getElementById("inputSenhaModal").value;
-    const erro = document.getElementById("erroSenha");
+  const produtosFiltrados = produtos.filter(p => 
+    p.nome.toLowerCase().includes(filtro.toLowerCase())
+  );
 
-    if (senhaDigitada === GERENTE_SENHA) {
-      gerenteAutenticado = true; // ✅ senha liberada até sair da aba
-      fecharModalSenha();
-      if (acaoPendente) acaoPendente();
-    } else {
-      erro.classList.remove("hidden");
-    }
-  }
-
-  function carregarEstoque(filtro = "") {
-    estoqueTableBody.innerHTML = "";
-
-    const produtosFiltrados = produtos.filter(p => 
-      p.nome.toLowerCase().includes(filtro.toLowerCase())
-    );
-
-    if (produtosFiltrados.length === 0) {
-      estoqueTableBody.innerHTML = `
-        <tr>
-          <td colspan="4" class="text-center text-gray-500 py-4">
-            Nenhum produto encontrado.
-          </td>
-        </tr>`;
-      totalItensEl.innerText = 0;
-      valorTotalEl.innerText = "0.00";
-      return;
-    }
-
-    let totalItens = 0;
-    let valorTotal = 0;
-
-    produtosFiltrados.forEach((p, i) => {
-      totalItens += p.quantidade;
-      valorTotal += p.quantidade * p.preco;
-
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td class="border px-2 py-1">${p.nome}</td>
-        <td class="border px-2 py-1 text-center">
-          <input type="number" id="quantidade-${i}" value="${p.quantidade}" 
-            class="border rounded p-1 w-20 text-center" min="0" readonly>
+  if (produtosFiltrados.length === 0) {
+    estoqueTableBody.innerHTML = `
+      <tr>
+        <td colspan="4" class="text-center text-gray-500 py-4">
+          Nenhum produto encontrado.
         </td>
-        <td class="border px-2 py-1 text-center">R$ ${parseFloat(p.preco).toFixed(2)}</td>
-        <td class="border px-2 py-1 text-center flex justify-center gap-2">
-          <button onclick="abrirModalSenha(() => alterarQuantidade(${i}, 1))" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded">+1</button>
-          <button onclick="abrirModalSenha(() => alterarQuantidade(${i}, -1))" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">-1</button>
-          <button onclick="abrirModalSenha(() => salvarQuantidade(${i}))" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">Salvar</button>
-        </td>
-      `;
-      estoqueTableBody.appendChild(tr);
-    });
-
-    totalItensEl.innerText = totalItens;
-    valorTotalEl.innerText = valorTotal.toFixed(2);
+      </tr>`;
+    totalItensEl.innerText = 0;
+    valorTotalEl.innerText = "0.00";
+    return;
   }
 
-  function alterarQuantidade(index, valor) {
-    if (produtos[index].quantidade + valor < 0) {
-      alert("Quantidade não pode ser negativa!");
-      return;
-    }
-    produtos[index].quantidade += valor;
-    localStorage.setItem("produtos", JSON.stringify(produtos));
-    carregarEstoque(filtroInput.value);
-  }
+  let totalItens = 0;
+  let valorTotal = 0;
 
-  function salvarQuantidade(index) {
-    const input = document.getElementById(`quantidade-${index}`);
-    const novaQuantidade = parseInt(input.value);
+  produtosFiltrados.forEach((p, i) => {
+    totalItens += p.quantidade;
+    valorTotal += p.quantidade * p.preco;
 
-    if (isNaN(novaQuantidade) || novaQuantidade < 0) {
-      alert("Digite um valor válido para a quantidade!");
-      input.value = produtos[index].quantidade;
-      return;
-    }
-
-    produtos[index].quantidade = novaQuantidade;
-    localStorage.setItem("produtos", JSON.stringify(produtos));
-    carregarEstoque(filtroInput.value);
-  }
-
-  filtroInput.addEventListener("input", () => {
-    carregarEstoque(filtroInput.value);
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="border px-2 py-1">${p.nome}</td>
+      <td class="border px-2 py-1 text-center">
+        <input type="number" id="quantidade-${i}" value="${p.quantidade}" 
+          class="border rounded p-1 w-20 text-center" min="0" readonly>
+      </td>
+      <td class="border px-2 py-1 text-center">R$ ${parseFloat(p.preco).toFixed(2)}</td>
+      <td class="border px-2 py-1 text-center flex justify-center gap-2">
+        <button onclick="abrirModalSenha(() => alterarQuantidade(${i}, 1))" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded">+1</button>
+        <button onclick="abrirModalSenha(() => alterarQuantidade(${i}, -1))" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">-1</button>
+        <button onclick="abrirModalSenha(() => salvarQuantidade(${i}))" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">Salvar</button>
+      </td>
+    `;
+    estoqueTableBody.appendChild(tr);
   });
 
-  carregarEstoque();
+  totalItensEl.innerText = totalItens;
+  valorTotalEl.innerText = valorTotal.toFixed(2);
+}
+
+// Alterar quantidade
+function alterarQuantidade(index, valor) {
+  if (produtos[index].quantidade + valor < 0) {
+    alert("Quantidade não pode ser negativa!");
+    return;
+  }
+  produtos[index].quantidade += valor;
+  localStorage.setItem("produtos", JSON.stringify(produtos));
+  carregarEstoque(filtroInput.value);
+}
+
+// Salvar quantidade manual
+function salvarQuantidade(index) {
+  const input = document.getElementById(`quantidade-${index}`);
+  const novaQuantidade = parseInt(input.value);
+
+  if (isNaN(novaQuantidade) || novaQuantidade < 0) {
+    alert("Digite um valor válido para a quantidade!");
+    input.value = produtos[index].quantidade;
+    return;
+  }
+
+  produtos[index].quantidade = novaQuantidade;
+  localStorage.setItem("produtos", JSON.stringify(produtos));
+  carregarEstoque(filtroInput.value);
+}
+
+// Filtro de busca
+filtroInput.addEventListener("input", () => {
+  carregarEstoque(filtroInput.value);
+});
+
+// Inicializa
+carregarEstoque();
 </script>
 
 </body>
