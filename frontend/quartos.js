@@ -118,14 +118,28 @@ function listarQuartos() {
     `;
 
     card.addEventListener('click', () => {
+      // CORREÇÃO DE FORMATO: Captura e formata a hora local manualmente para garantir HH:MM:SS
+      const agora = new Date();
+      const horaFormatada = [
+          String(agora.getHours()).padStart(2, '0'),
+          String(agora.getMinutes()).padStart(2, '0'),
+          String(agora.getSeconds()).padStart(2, '0')
+      ].join(':');
+
       if (quarto.status === 'livre') {
         quarto.status = 'ocupado';
-        entradas[index] = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        // Salva o formato de string limpa em ambos os locais para uso no pagamento.js e display.
+        quarto.horaEntrada = horaFormatada;
+        entradas[index] = horaFormatada;
       } else if (quarto.status === 'ocupado') {
-        quarto.status = 'limpeza';
+        // Redireciona para o pagamento
+        localStorage.setItem("quartoSelecionado", index);
+        window.location.href = "pagamento.html";
+        return; 
       } else {
         quarto.status = 'livre';
         entradas[index] = null;
+        quarto.horaEntrada = null;
       }
 
       quartos[index] = quarto;
@@ -163,11 +177,12 @@ if (quartoForm) {
     }
 
     let quartos = JSON.parse(localStorage.getItem('quartos')) || [];
-    quartos.push({ nome, valor, status });
+    // Inicializa o novo campo horaEntrada
+    quartos.push({ nome, valor, status, horaEntrada: null }); 
     localStorage.setItem('quartos', JSON.stringify(quartos));
 
     let entradas = JSON.parse(localStorage.getItem('entradasQuartos')) || {};
-    entradas[quartos.length - 1] = null;
+    entradas[quartos.length - 1] = "--:--";
     localStorage.setItem('entradasQuartos', JSON.stringify(entradas));
 
     quartoForm.reset();
@@ -211,7 +226,9 @@ function editarQuarto(index) {
     const atualizado = {
       nome: document.getElementById('nomeQuarto').value.trim(),
       valor: document.getElementById('valorQuarto').value,
-      status: document.getElementById('statusQuarto').value
+      status: document.getElementById('statusQuarto').value,
+      // Preserva o horário de entrada (horaEntrada) ao editar
+      horaEntrada: quarto.horaEntrada || null
     };
 
     quartos[index] = atualizado;
