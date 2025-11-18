@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diária - Motel Maçã do Amor</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  @media print {
+    body * { visibility: hidden; }
+    #comprovante, #comprovante * { visibility: visible; }
+    #comprovante { position: absolute; left: 0; top: 0; width: 100%; }
+  }
+</style>
+</head>
+<body class="flex bg-gray-100 min-h-screen">
+
+<!-- Sidebar -->
+<aside class="w-64 bg-white shadow-md p-4 flex flex-col gap-4">
+  <h1 class="text-2xl font-bold text-red-600 text-center">Motel Maçã do Amor</h1>
+  <nav class="flex flex-col gap-3">
+    <a href="dashboard.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+    <a href="quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-bed"></i> Quartos</a>
+    <a href="controle_quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-sliders"></i> Controle de Quartos</a>
+    <a href="consumo.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-wine-bottle"></i> Consumo</a>
+    <a href="pagamento.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-credit-card"></i> Pagamento</a>
+    <a href="relatorio.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-chart-line"></i> Relatórios</a>
+    <a href="produto.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-box"></i> Produtos</a>
+    <a href="estoque.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-warehouse"></i> Estoque</a>
+    <a href="usuarios.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-users"></i> Usuários</a>
+    <a href="diaria.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded"><i class="fa-solid fa-file-alt"></i> Diária</a>
+    
+  </nav>
+  <div class="mt-auto">
+    <a href="login.html" class="flex items-center gap-2 p-2 text-red-600 hover:bg-gray-200 rounded"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="flex-1 p-6">
+
+  <!-- Título -->
+  <h2 class="text-3xl font-semibold mb-6">Cadastro de Diária</h2>
+
+  <!-- Formulário de Cadastro -->
+  <section class="bg-white p-6 rounded-xl shadow mb-6">
+    <form id="funcionarioForm" class="flex flex-col gap-4">
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <!-- Campos do colaborador -->
+        <div class="flex flex-col">
+          <label class="mb-1 font-semibold">Nome completo</label>
+          <input type="text" id="nome" class="border rounded-xl p-2" required>
+        </div>
+
+        <div class="flex flex-col">
+          <label class="mb-1 font-semibold">Data de Nascimento</label>
+          <input type="date" id="nascimento" class="border rounded-xl p-2" required>
+        </div>
+
+        <div class="flex flex-col">
+          <label class="mb-1 font-semibold">CPF</label>
+          <input type="text" id="cpf" class="border rounded-xl p-2" required>
+        </div>
+
+        <div class="flex flex-col">
+          <label class="mb-1 font-semibold">E-mail</label>
+          <input type="email" id="email" class="border rounded-xl p-2" required>
+        </div>
+
+        <div class="flex flex-col">
+          <label class="mb-1 font-semibold">Endereço</label>
+          <input type="text" id="endereco" class="border rounded-xl p-2" required>
+        </div>
+
+        <div class="flex flex-col">
+          <label class="mb-1 font-semibold">Data Entrada</label>
+          <input type="date" id="dataEntrada" class="border rounded-xl p-2" required>
+        </div>
+
+        <div class="flex flex-col">
+          <label class="mb-1 font-semibold">Horário Entrada</label>
+          <input type="time" id="horaEntrada" class="border rounded-xl p-2" required>
+        </div>
+
+        <div class="flex flex-col">
+          <label class="mb-1 font-semibold">Data Saída</label>
+          <input type="date" id="dataSaida" class="border rounded-xl p-2" required>
+        </div>
+
+        <div class="flex flex-col">
+          <label class="mb-1 font-semibold">Horário Saída</label>
+          <input type="time" id="horaSaida" class="border rounded-xl p-2" required>
+        </div>
+
+        <div class="flex flex-col">
+          <label class="mb-1 font-semibold">Valor da Diária (R$)</label>
+          <input type="number" step="0.01" id="valorDiaria" class="border rounded-xl p-2" required>
+        </div>
+
+      </div>
+
+      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl w-40 mt-2">Cadastrar</button>
+
+    </form>
+  </section>
+
+  <!-- Tabela de Funcionários -->
+  <section class="bg-white p-6 rounded-xl shadow">
+    <table class="w-full border-collapse border border-gray-300">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="border px-2 py-2">Nome</th>
+          <th class="border px-2 py-2">CPF</th>
+          <th class="border px-2 py-2">Data Entrada</th>
+          <th class="border px-2 py-2">Horário Entrada</th>
+          <th class="border px-2 py-2">Data Saída</th>
+          <th class="border px-2 py-2">Horário Saída</th>
+          <th class="border px-2 py-2">Valor Diária</th>
+          <th class="border px-2 py-2">Ações</th>
+        </tr>
+      </thead>
+      <tbody id="funcionarioTableBody"></tbody>
+    </table>
+  </section>
+
+</main>
+
+<!-- Modal Comprovante -->
+<div id="comprovanteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+
+  <div class="bg-white rounded-xl shadow-xl p-6 w-full max-w-lg">
+    <div id="comprovante">
+      <h2 class="text-2xl font-bold text-center mb-2">Motel Maçã do Amor</h2>
+      <p class="text-center mb-4">CNPJ: 00.000.000/0000-00</p>
+      <p><strong>Nome:</strong> <span id="compNome"></span></p>
+      <p><strong>Data Nascimento:</strong> <span id="compNascimento"></span></p>
+      <p><strong>CPF:</strong> <span id="compCPF"></span></p>
+      <p><strong>E-mail:</strong> <span id="compEmail"></span></p>
+      <p><strong>Endereço:</strong> <span id="compEndereco"></span></p>
+      <p><strong>Data Entrada:</strong> <span id="compDataEntrada"></span> <strong>Horário:</strong> <span id="compHoraEntrada"></span></p>
+      <p><strong>Data Saída:</strong> <span id="compDataSaida"></span> <strong>Horário:</strong> <span id="compHoraSaida"></span></p>
+      <p><strong>Valor da Diária:</strong> R$ <span id="compValor"></span></p>
+      <div class="flex justify-between mt-8">
+        <div class="text-center">
+          ____________________________<br>
+          Assinatura do Colaborador
+        </div>
+        <div class="text-center">
+          ____________________________<br>
+          Assinatura do Gerente
+        </div>
+      </div>
+    </div>
+    <div class="flex justify-end gap-2 mt-4">
+      <button onclick="imprimirComprovante()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Imprimir</button>
+      <button onclick="fecharComprovante()" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let funcionarios = JSON.parse(localStorage.getItem("funcionarios")) || [];
+const funcionarioForm = document.getElementById("funcionarioForm");
+const funcionarioTableBody = document.getElementById("funcionarioTableBody");
+
+function formatarData(dataStr) {
+  const d = new Date(dataStr);
+  return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+}
+
+function validarCPF(cpf) {
+  cpf = cpf.replace(/[^\d]+/g,'');
+  if(cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+  let sum = 0, rest;
+  for (let i=1; i<=9; i++) sum += parseInt(cpf.substring(i-1,i))*(11-i);
+  rest=(sum*10)%11; if(rest===10||rest===11)rest=0;
+  if(rest!==parseInt(cpf.substring(9,10))) return false;
+  sum=0;
+  for(let i=1;i<=10;i++)sum+=parseInt(cpf.substring(i-1,i))*(12-i);
+  rest=(sum*10)%11;if(rest===10||rest===11)rest=0;
+  return rest===parseInt(cpf.substring(10,11));
+}
+
+function carregarFuncionarios() {
+  funcionarioTableBody.innerHTML = "";
+  funcionarios.forEach((f, i) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="border px-2 py-1">${f.nome}</td>
+      <td class="border px-2 py-1">${f.cpf}</td>
+      <td class="border px-2 py-1">${f.dataEntrada}</td>
+      <td class="border px-2 py-1">${f.horaEntrada}</td>
+      <td class="border px-2 py-1">${f.dataSaida}</td>
+      <td class="border px-2 py-1">${f.horaSaida}</td>
+      <td class="border px-2 py-1">R$ ${f.valorDiaria}</td>
+      <td class="border px-2 py-1 flex gap-2 justify-center">
+        <button onclick="gerarComprovante(${i})" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">Gerar</button>
+        <button onclick="apagarFuncionario(${i})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">Apagar</button>
+      </td>
+    `;
+    funcionarioTableBody.appendChild(tr);
+  });
+}
+
+funcionarioForm.addEventListener("submit", e => {
+  e.preventDefault();
+  const f = {
+    nome: document.getElementById("nome").value.trim(),
+    nascimento: formatarData(document.getElementById("nascimento").value),
+    cpf: document.getElementById("cpf").value.trim(),
+    email: document.getElementById("email").value.trim(),
+    endereco: document.getElementById("endereco").value.trim(),
+    dataEntrada: formatarData(document.getElementById("dataEntrada").value),
+    horaEntrada: document.getElementById("horaEntrada").value,
+    dataSaida: formatarData(document.getElementById("dataSaida").value),
+    horaSaida: document.getElementById("horaSaida").value,
+    valorDiaria: parseFloat(document.getElementById("valorDiaria").value).toFixed(2)
+  };
+
+  if (!f.nome || !f.nascimento || !f.cpf || !f.email || !f.endereco || !f.dataEntrada || !f.horaEntrada || !f.dataSaida || !f.horaSaida || !f.valorDiaria) {
+    alert("Preencha todos os campos!");
+    return;
+  }
+  if (!validarCPF(f.cpf)) { alert("CPF inválido!"); return; }
+
+  funcionarios.push(f);
+  localStorage.setItem("funcionarios", JSON.stringify(funcionarios));
+  carregarFuncionarios();
+  funcionarioForm.reset();
+});
+
+function apagarFuncionario(index) {
+  if (!confirm("Deseja realmente apagar este funcionário?")) return;
+  funcionarios.splice(index,1);
+  localStorage.setItem("funcionarios", JSON.stringify(funcionarios));
+  carregarFuncionarios();
+}
+
+function gerarComprovante(index) {
+  const f = funcionarios[index];
+  document.getElementById("compNome").innerText = f.nome;
+  document.getElementById("compNascimento").innerText = f.nascimento;
+  document.getElementById("compCPF").innerText = f.cpf;
+  document.getElementById("compEmail").innerText = f.email;
+  document.getElementById("compEndereco").innerText = f.endereco;
+  document.getElementById("compDataEntrada").innerText = f.dataEntrada;
+  document.getElementById("compHoraEntrada").innerText = f.horaEntrada;
+  document.getElementById("compDataSaida").innerText = f.dataSaida;
+  document.getElementById("compHoraSaida").innerText = f.horaSaida;
+  document.getElementById("compValor").innerText = f.valorDiaria;
+  document.getElementById("comprovanteModal").classList.remove("hidden");
+}
+
+function fecharComprovante() { document.getElementById("comprovanteModal").classList.add("hidden"); }
+function imprimirComprovante() { window.print(); }
+
+carregarFuncionarios();
+</script>
+
+</body>
+</html>
