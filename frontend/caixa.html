@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caixa - Motel Maçã do Amor</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body class="flex bg-gray-100 min-h-screen">
+
+<!-- ======================== -->
+<!--       SIDEBAR FIXA       -->
+<!-- ======================== -->
+<aside class="w-64 bg-white shadow-md p-4 flex flex-col gap-4 fixed h-full">
+  <h1 class="text-2xl font-bold text-red-600 text-center">Motel Maçã do Amor</h1>
+  <nav class="flex flex-col gap-3 mt-4">
+    <a href="dashboard.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+    <a href="quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-bed"></i> Quartos</a>
+    <a href="controle_quartos.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-sliders"></i> Controle de Quartos</a>
+    <a href="consumo.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-wine-bottle"></i> Consumo</a>
+    <a href="pagamento.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded"><i class="fa-solid fa-credit-card"></i> Pagamento</a>
+    <a href="relatorio.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-chart-line"></i> Relatórios</a>
+    <a href="produto.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-box"></i> Produtos</a>
+    <a href="estoque.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-warehouse"></i> Estoque</a>
+    <a href="usuarios.html" class="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"><i class="fa-solid fa-users"></i> Usuários</a>
+    <a href="diaria.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded"><i class="fa-solid fa-file-alt"></i> Diária</a>
+    <a href="caixa.html" class="flex items-center gap-2 p-2 bg-gray-200 rounded"><i class="fa-solid fa-cash-register"></i> Caixa</a>
+  </nav>
+  <div class="mt-auto">
+    <a href="login.html" class="flex items-center gap-2 p-2 text-red-600 hover:bg-gray-200 rounded"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
+  </div>
+</aside>
+
+<!-- ======================== -->
+<!--     ÁREA PRINCIPAL       -->
+<!-- ======================== -->
+<main class="flex-1 ml-64 p-8 overflow-x-auto">
+
+    <h1 class="text-3xl font-bold mb-6 flex items-center gap-3">
+        <i class="fa-solid fa-cash-register text-red-600"></i>
+        Controle de Caixa
+    </h1>
+
+    <!-- TABELA -->
+    <div class="overflow-x-auto bg-white shadow-md rounded-lg p-4">
+        <table class="w-full text-center min-w-full border-collapse">
+            <thead class="bg-gray-200 text-gray-700">
+                <tr>
+                    <th class="py-3 px-4 border">Funcionário</th>
+                    <th class="py-3 px-4 border">Data Abertura</th>
+                    <th class="py-3 px-4 border">Hora</th>
+                    <th class="py-3 px-4 border">Valor Abertura</th>
+                    <th class="py-3 px-4 border">Entrou</th>
+                    <th class="py-3 px-4 border">Valor Fechamento</th>
+                    <th class="py-3 px-4 border">Data Fechamento</th>
+                    <th class="py-3 px-4 border">Hora</th>
+                    <th class="py-3 px-4 border">Diferença</th>
+                </tr>
+            </thead>
+
+            <tbody id="tabelaCaixa" class="text-sm"></tbody>
+        </table>
+    </div>
+
+</main>
+
+<script src="caixa.js"></script>
+
+</body>
+</html>
